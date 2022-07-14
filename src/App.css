@@ -1,0 +1,17 @@
+.App {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+.game-container {
+  position: relative;
+  width: 240px;
+  height: 208px;
+  background: url(/public/map.png) no-repeat no-repeat;
+  transform: scale(3);
+  image-rendering: pixelated;
+}
