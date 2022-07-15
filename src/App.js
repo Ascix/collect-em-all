@@ -24,7 +24,7 @@ function App() {
   let playerId
   let playerRef
 
-  const [players, setPlayers] = useState([])
+  const [players, setPlayers] = useState({})
   const [addedPlayer, setAddedPlayer] = useState([])
 
   function InitGame() {
@@ -32,13 +32,12 @@ function App() {
     // const allCoinsRef = ref(database, `coins`);
     
     onValue(allPlayersRef, (snapshot) => {
-      setPlayers([...players, snapshot.val()])
+      setPlayers(snapshot.val())
     })
     onChildAdded(allPlayersRef, (snapshot) => {
       setAddedPlayer(snapshot.val())
     })
   }
-  console.log(addedPlayer)
 
   const playerColors = ["blue", "red", "orange", "yellow", "green", "purple"];
 
@@ -81,34 +80,35 @@ function App() {
     ]);
     return `${prefix} ${animal}`;
   }
- useEffect(() => {
-   auth.onAuthStateChanged((user) => {
-     if (user) {
-       // logged in
-       playerId = user.uid;
-       playerRef = ref(database, `players/${playerId}`)
-       
-       const name = createName();
- 
-       set(playerRef, {
-         id: playerId,
-         name,
-         direction: "right",
-         color: RandomFromArray(playerColors),
-         x: 3,
-         y: 3,
-         coins: 0,
-       })
- 
-       onDisconnect(playerRef).remove()
- 
-       InitGame()
-     }
-     else {
-       // logged out
-     }
-   })
- },[])
+
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        // logged in
+        playerId = user.uid;
+        playerRef = ref(database, `players/${playerId}`)
+        
+        const name = createName();
+  
+        set(playerRef, {
+          id: playerId,
+          name,
+          direction: "right",
+          color: RandomFromArray(playerColors),
+          x: 3,
+          y: 5,
+          coins: 0,
+        })
+  
+        onDisconnect(playerRef).remove()
+  
+        InitGame()
+      }
+      else {
+        // logged out
+      }
+    })
+  },[])
 
   signInAnonymously(auth)
 
@@ -116,8 +116,16 @@ function App() {
     <div className="App">
       <div className="game-container">
       {
-        players.map((player) => {
-          return <RenderPlayer name={player.name} coins={player.coins} color={player.color} direction={player.direction} />
+        Object.entries(players).map(([key, player]) => {
+          return <RenderPlayer
+            key={player.id} 
+            name={player.name} 
+            coins={player.coins} 
+            color={player.color} 
+            direction={player.direction}
+            left={16 * player.x + "px"}
+            top={16 * player.y - 4 + "px"}
+          />
         })
       }
       </div>

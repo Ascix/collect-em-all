@@ -1,0 +1,64 @@
+.grid-cell {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+}
+
+.Character {
+    transition: transform 0.4s;
+    position: absolute
+}
+
+.Character_shadow {
+    background: url(/public/shadow.png) no-repeat no-repeat;
+    top: 3px;
+    position: absolute
+}
+
+.Character_sprite {
+    overflow: hidden;
+    background: url(/public/characters.png);
+}
+
+.Character_sprite[direction="right"] {
+    background-position-x: 16px;
+}
+
+.Character_sprite[color="red"]{
+    background-position-y: -16px;
+}
+.Character_sprite[color="orange"] {
+  background-position-y: -32px;
+}
+.Character_sprite[color="yellow"] {
+  background-position-y: -48px;
+}
+.Character_sprite[color="green"]{
+  background-position-y: -64px;
+}
+.Character_sprite[color="purple"]{
+  background-position-y: -80px;
+}
+
+
+
+.Character_name-container {
+    position: absolute;
+    left: -8px;
+    top: -9px;
+    font-size: 5px;
+    padding: 1px 2px 1px;
+    border-radius: 3px;
+    background: #333;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    white-space: nowrap;
+    display: flex;
+    justify-items: space-between;
+}
+
+.Character_coins {
+    margin-left: 1px;
+    color: gold;
+}
