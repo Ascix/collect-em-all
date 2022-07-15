@@ -44,7 +44,7 @@
 
 .Character_name-container {
     position: absolute;
-    left: -8px;
+    left: -6px;
     top: -9px;
     font-size: 5px;
     padding: 1px 2px 1px;
@@ -54,8 +54,6 @@
     font-weight: bold;
     text-transform: uppercase;
     white-space: nowrap;
-    display: flex;
-    justify-items: space-between;
 }
 
 .Character_coins {

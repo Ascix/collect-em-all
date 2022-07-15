@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { getDatabase, ref, set, onDisconnect, onChildAdded, onValue } from "firebase/database";
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import RandomFromArray from './components/RandomFromArray';
 import RenderPlayer from './components/RenderPlayer';
@@ -21,22 +21,51 @@ function App() {
   const auth = getAuth(app);
   const database = getDatabase(app);
 
-  let playerId
-  let playerRef
-
   const [players, setPlayers] = useState({})
-  const [addedPlayer, setAddedPlayer] = useState([])
+  // const [addedPlayer, setAddedPlayer] = useState([])
+  const [playerId, setPlayerId] = useState(null)
+  const [playerRef, setPlayerRef] = useState(null)
+  
+  useEffect(() => {
+    if (!playerRef) {
+      return
+    }
+    const handleKeyPress = event => {
+      if (event.key === "ArrowLeft") {
+        players[playerId].direction = "left";
+        players[playerId].x -= 1
+      }
+      if (event.key === "ArrowRight") {
+        players[playerId].direction = "right";
+        players[playerId].x += 1
+      }
+      if (event.key === "ArrowUp") {
+        players[playerId].y -= 1
+      }
+      if (event.key === "ArrowDown") {
+        players[playerId].y += 1
+      }
+      set(playerRef, players[playerId])
+    }
+    console.log('updating')
+    document.addEventListener("keydown", handleKeyPress)
+    return () => {
+      document.removeEventListener("keydown", handleKeyPress)
+    }
+  },[players, playerRef, playerId])
+
 
   function InitGame() {
+
     const allPlayersRef = ref(database, `players`);
     // const allCoinsRef = ref(database, `coins`);
     
     onValue(allPlayersRef, (snapshot) => {
       setPlayers(snapshot.val())
     })
-    onChildAdded(allPlayersRef, (snapshot) => {
-      setAddedPlayer(snapshot.val())
-    })
+    // onChildAdded(allPlayersRef, (snapshot) => {
+    //   setAddedPlayer(snapshot.val())
+    // })
   }
 
   const playerColors = ["blue", "red", "orange", "yellow", "green", "purple"];
@@ -80,18 +109,21 @@ function App() {
     ]);
     return `${prefix} ${animal}`;
   }
+  const refer = useRef(null)
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
         // logged in
-        playerId = user.uid;
-        playerRef = ref(database, `players/${playerId}`)
+
+        setPlayerId(user.uid)
         
-        const name = createName();
+        const player = ref(database, `players/${user.uid}`)
+        setPlayerRef(player)
+        const name = createName()
   
-        set(playerRef, {
-          id: playerId,
+        set(player, {
+          id: user.uid,
           name,
           direction: "right",
           color: RandomFromArray(playerColors),
@@ -100,23 +132,24 @@ function App() {
           coins: 0,
         })
   
-        onDisconnect(playerRef).remove()
+        onDisconnect(player).remove()
   
         InitGame()
+        refer.current.focus()
       }
       else {
         // logged out
       }
     })
+    signInAnonymously(auth)
   },[])
 
-  signInAnonymously(auth)
 
   return (
     <div className="App">
-      <div className="game-container">
-      {
-        Object.entries(players).map(([key, player]) => {
+      <div className="game-container" ref={refer}>
+      { playerRef &&
+        Object.entries(players??{}).map(([key, player]) => {
           return <RenderPlayer
             key={player.id} 
             name={player.name} 
