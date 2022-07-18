@@ -3,6 +3,7 @@ import { getAuth, signInAnonymously } from "firebase/auth";
 import { getDatabase, ref, set, onDisconnect, onChildAdded, onValue } from "firebase/database";
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
+import BlockedSpaces from './components/BlockedSpaces';
 import RandomFromArray from './components/RandomFromArray';
 import RenderPlayer from './components/RenderPlayer';
 
@@ -26,28 +27,49 @@ function App() {
   const [playerId, setPlayerId] = useState(null)
   const [playerRef, setPlayerRef] = useState(null)
   
+  const keypress = useRef(false)
+
   useEffect(() => {
     if (!playerRef) {
       return
     }
     const handleKeyPress = event => {
-      if (event.key === "ArrowLeft") {
-        players[playerId].direction = "left";
-        players[playerId].x -= 1
+      if (keypress.current) {
+        return
       }
+      keypress.current = setTimeout(() => {
+        keypress.current = null
+      }, 275)
+      if (event.key === "ArrowLeft") {
+          if (!BlockedSpaces(players[playerId].x - 1, players[playerId].y)) {
+            players[playerId].direction = "left"
+            players[playerId].x -= 1
+          }
+          else {
+            players[playerId].direction = "left"
+          }
+        }
       if (event.key === "ArrowRight") {
-        players[playerId].direction = "right";
-        players[playerId].x += 1
+          if (!BlockedSpaces(players[playerId].x + 1, players[playerId].y)) {
+            players[playerId].direction = "right"
+            players[playerId].x += 1
+          }
+          else {
+            players[playerId].direction = "right"
+          }
       }
       if (event.key === "ArrowUp") {
-        players[playerId].y -= 1
+          if (!BlockedSpaces(players[playerId].x, players[playerId].y - 1)) {
+            players[playerId].y -= 1
+          }
       }
       if (event.key === "ArrowDown") {
-        players[playerId].y += 1
+          if (!BlockedSpaces(players[playerId].x, players[playerId].y + 1)) {
+            players[playerId].y += 1
+          }
       }
       set(playerRef, players[playerId])
     }
-    console.log('updating')
     document.addEventListener("keydown", handleKeyPress)
     return () => {
       document.removeEventListener("keydown", handleKeyPress)
