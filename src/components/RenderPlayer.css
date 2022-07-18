@@ -2,47 +2,46 @@
     position: absolute;
     width: 16px;
     height: 16px;
-    transition: transform 0.4s;
 }
 
-.Character {
+.character {
     transition: transform 0.4s;
     position: absolute;
     width: 16px;
 }
 
-.Character_shadow {
+.character-shadow {
     background: url(/public/shadow.png) no-repeat no-repeat;
     top: 3px;
     position: absolute
 }
 
-.Character_sprite {
+.character-sprite {
     overflow: hidden;
     background: url(/public/characters.png);
 }
 
-.Character_sprite[direction="right"] {
+.character-sprite[direction="right"] {
     background-position-x: 16px;
 }
 
-.Character_sprite[color="red"]{
+.character-sprite[color="red"]{
     background-position-y: -16px;
 }
-.Character_sprite[color="orange"] {
+.character-sprite[color="orange"] {
   background-position-y: -32px;
 }
-.Character_sprite[color="yellow"] {
+.character-sprite[color="yellow"] {
   background-position-y: -48px;
 }
-.Character_sprite[color="green"]{
+.character-sprite[color="green"]{
   background-position-y: -64px;
 }
-.Character_sprite[color="purple"]{
+.character-sprite[color="purple"]{
   background-position-y: -80px;
 }
 
-.Character_name-container {
+.character-name-container {
     position: absolute;
     left: -50%;
     top: -9px;
@@ -56,7 +55,7 @@
     white-space: nowrap;
 }
 
-.Character_coins {
+.character-coins {
     margin-left: 1px;
     color: gold;
 }

@@ -1,11 +1,14 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously } from "firebase/auth";
-import { getDatabase, ref, set, onDisconnect, onChildAdded, onValue } from "firebase/database";
+import { getDatabase, ref, set, onDisconnect, onChildAdded, onValue, onChildRemoved, get } from "firebase/database";
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import BlockedSpaces from './components/BlockedSpaces';
+import GetCoordinates from './components/GetCoordinates';
 import RandomFromArray from './components/RandomFromArray';
+import RenderCoin from './components/RenderCoin';
 import RenderPlayer from './components/RenderPlayer';
+import SafeSpot from './components/SafeSpot';
 
 function App() {
   const firebaseConfig = {
@@ -27,6 +30,8 @@ function App() {
   const [playerId, setPlayerId] = useState(null)
   const [playerRef, setPlayerRef] = useState(null)
   
+  const [coins, setCoins] = useState({})
+
   const keypress = useRef(false)
 
   useEffect(() => {
@@ -76,20 +81,41 @@ function App() {
     }
   },[players, playerRef, playerId])
 
+  function CoinSpawn() {
+    const { x, y } = SafeSpot()
+    const coinRef = ref(database, `coins/${GetCoordinates(x, y)}`)
+    set(coinRef, {
+      x,
+      y,
+    })
+    const spawnDelay = [ 2000, 3000, 4000, 5000 ];
+    setTimeout(() => {
+      get(ref(database, `coins`)).then((snapshot) => {
+        const coins = snapshot.val()
+        if (Object.keys(coins).length < 10) {
+          CoinSpawn()
+        }
+      })
+    }, RandomFromArray(spawnDelay))
+  }
+  console.log(coins)
 
   function InitGame() {
 
     const allPlayersRef = ref(database, `players`);
-    // const allCoinsRef = ref(database, `coins`);
+    const allCoinsRef = ref(database, `coins`);
     
     onValue(allPlayersRef, (snapshot) => {
       setPlayers(snapshot.val())
     })
     // onChildAdded(allPlayersRef, (snapshot) => {
-    //   setAddedPlayer(snapshot.val())
-    // })
+      //   setAddedPlayer(snapshot.val())
+      // })
+    onValue(allCoinsRef, (snapshot) => {
+      setCoins(snapshot.val())
+    })
+    CoinSpawn()
   }
-
   const playerColors = ["blue", "red", "orange", "yellow", "green", "purple"];
 
   function createName() {
@@ -153,7 +179,8 @@ function App() {
           y: 5,
           coins: 0,
         })
-  
+        
+        // remove player from database when logged out
         onDisconnect(player).remove()
   
         InitGame()
@@ -180,6 +207,15 @@ function App() {
             direction={player.direction}
             left={16 * player.x + "px"}
             top={16 * player.y - 4 + "px"}
+          />
+        })
+      }
+      { 
+        Object.entries(coins??{}).map(([key, coin]) => {
+          return <RenderCoin
+            key={coin.x + "x" + coin.y}
+            left={16 * coin.x + "px"}
+            top={16 * coin.y - 4 + "px"}
           />
         })
       }
