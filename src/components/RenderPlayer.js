@@ -1,7 +1,7 @@
 import './RenderPlayer.css'
 
 function RenderPlayer(props) {
-    const { name, coins, color, direction, left, top, you } = props
+    const { name, coins, color, direction, left, top } = props
     return (
         <div className="character" style={{ transform: `translate3d(${left},${top},0)` }}>
           <div className="character-shadow grid-cell"></div>

@@ -1,9 +1,11 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously } from "firebase/auth";
-import { getDatabase, ref, set, onDisconnect, onChildAdded, onValue, onChildRemoved, get } from "firebase/database";
+import { getDatabase, ref, set, onDisconnect, onChildAdded, onValue, onChildRemoved, get, update, remove } from "firebase/database";
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import BlockedSpaces from './components/BlockedSpaces';
+import CoinSpawn from './components/CoinSpawn';
+import CreateName from './components/CreateName';
 import GetCoordinates from './components/GetCoordinates';
 import RandomFromArray from './components/RandomFromArray';
 import RenderCoin from './components/RenderCoin';
@@ -34,6 +36,7 @@ function App() {
 
   const keypress = useRef(false)
 
+  // player movement
   useEffect(() => {
     if (!playerRef) {
       return
@@ -74,31 +77,29 @@ function App() {
           }
       }
       set(playerRef, players[playerId])
+      GrabCoin(players[playerId].x, players[playerId].y)
     }
     document.addEventListener("keydown", handleKeyPress)
     return () => {
       document.removeEventListener("keydown", handleKeyPress)
     }
-  },[players, playerRef, playerId])
+  },[players, playerRef, playerId, GrabCoin])
 
-  function CoinSpawn() {
-    const { x, y } = SafeSpot()
-    const coinRef = ref(database, `coins/${GetCoordinates(x, y)}`)
-    set(coinRef, {
-      x,
-      y,
-    })
-    const spawnDelay = [ 2000, 3000, 4000, 5000 ];
-    setTimeout(() => {
+  function GrabCoin(x, y) {
+    const key = GetCoordinates(x, y)
+    if (coins[key]) {
+      remove(ref(database, `coins/${key}`))
+      update(playerRef, {
+        coins: players[playerId].coins + 1
+      })
       get(ref(database, `coins`)).then((snapshot) => {
         const coins = snapshot.val()
         if (Object.keys(coins).length < 10) {
           CoinSpawn()
         }
       })
-    }, RandomFromArray(spawnDelay))
+    }
   }
-  console.log(coins)
 
   function InitGame() {
 
@@ -118,45 +119,7 @@ function App() {
   }
   const playerColors = ["blue", "red", "orange", "yellow", "green", "purple"];
 
-  function createName() {
-    const prefix = RandomFromArray([
-      "COOL",
-      "SUPER",
-      "HIP",
-      "SMUG",
-      "COOL",
-      "SILKY",
-      "GOOD",
-      "SAFE",
-      "DEAR",
-      "DAMP",
-      "WARM",
-      "RICH",
-      "LONG",
-      "DARK",
-      "SOFT",
-      "BUFF",
-      "DOPE",
-    ]);
-    const animal = RandomFromArray([
-      "BEAR",
-      "DOG",
-      "CAT",
-      "FOX",
-      "LAMB",
-      "LION",
-      "BOAR",
-      "GOAT",
-      "VOLE",
-      "SEAL",
-      "PUMA",
-      "MULE",
-      "BULL",
-      "BIRD",
-      "BUG",
-    ]);
-    return `${prefix} ${animal}`;
-  }
+  <CreateName />
   const refer = useRef(null)
 
   useEffect(() => {
@@ -168,7 +131,7 @@ function App() {
         
         const player = ref(database, `players/${user.uid}`)
         setPlayerRef(player)
-        const name = createName()
+        const name = CreateName()
   
         set(player, {
           id: user.uid,
@@ -192,7 +155,6 @@ function App() {
     })
     signInAnonymously(auth)
   },[])
-
 
   return (
     <div className="App">
