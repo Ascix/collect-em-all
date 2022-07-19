@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously } from "firebase/auth";
-import { getDatabase, ref, set, onDisconnect, onChildAdded, onValue, onChildRemoved, get, update, remove } from "firebase/database";
+import { getDatabase, ref, set, onDisconnect, onChildAdded, equalTo, onValue, onChildRemoved, get, update, remove, query, orderByChild } from "firebase/database";
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import BlockedSpaces from './components/BlockedSpaces';
@@ -10,7 +10,6 @@ import GetCoordinates from './components/GetCoordinates';
 import RandomFromArray from './components/RandomFromArray';
 import RenderCoin from './components/RenderCoin';
 import RenderPlayer from './components/RenderPlayer';
-import SafeSpot from './components/SafeSpot';
 
 function App() {
   const firebaseConfig = {
@@ -83,7 +82,7 @@ function App() {
     return () => {
       document.removeEventListener("keydown", handleKeyPress)
     }
-  },[players, playerRef, playerId, GrabCoin])
+  },[players, playerRef, playerId])
 
   function GrabCoin(x, y) {
     const key = GetCoordinates(x, y)
@@ -101,10 +100,12 @@ function App() {
     }
   }
 
+  const [newName, setNewName] = useState([CreateName()])
+
   function InitGame() {
 
-    const allPlayersRef = ref(database, `players`);
-    const allCoinsRef = ref(database, `coins`);
+    const allPlayersRef = query(ref(database, `players`), orderByChild('loggedIn'), equalTo(true))
+    const allCoinsRef = ref(database, `coins`)
     
     onValue(allPlayersRef, (snapshot) => {
       setPlayers(snapshot.val())
@@ -117,34 +118,40 @@ function App() {
     })
     CoinSpawn()
   }
-  const playerColors = ["blue", "red", "orange", "yellow", "green", "purple"];
-
+  
   <CreateName />
   const refer = useRef(null)
-
+  
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
         // logged in
-
+        
         setPlayerId(user.uid)
         
         const player = ref(database, `players/${user.uid}`)
         setPlayerRef(player)
         const name = CreateName()
-  
-        set(player, {
-          id: user.uid,
-          name,
-          direction: "right",
-          color: RandomFromArray(playerColors),
-          x: 3,
-          y: 5,
-          coins: 0,
+        const playerColors = ["blue", "red", "orange", "yellow", "green", "purple"];
+
+        get(player).then(snapshot => {
+          const playerData = snapshot.val() || {}
+          set(player, {
+            id: user.uid,
+            name: playerData.name || name,
+            direction: "right",
+            color: playerData.color || RandomFromArray(playerColors),
+            x: playerData.x || 3,
+            y: playerData.y || 5,
+            coins: playerData.coins || 0,
+            loggedIn: true
+          })
         })
         
         // remove player from database when logged out
-        onDisconnect(player).remove()
+        onDisconnect(player).update({
+          loggedIn: false
+        })
   
         InitGame()
         refer.current.focus()
@@ -156,8 +163,23 @@ function App() {
     signInAnonymously(auth)
   },[])
 
+  
+  const handleChange = (e) => {
+    setNewName(e.target.value)
+    update(playerRef, {
+      name: e.target.value
+    })
+}
+
+
   return (
     <div className="App">
+      <div className="ui">
+      <div>
+            <label htmlFor="player-name">Your Name</label>
+            <input id="player-name" maxLength={10} onChange={handleChange} />
+        </div>
+      </div>
       <div className="game-container" ref={refer}>
       { playerRef &&
         Object.entries(players??{}).map(([key, player]) => {
@@ -169,6 +191,7 @@ function App() {
             direction={player.direction}
             left={16 * player.x + "px"}
             top={16 * player.y - 4 + "px"}
+
           />
         })
       }

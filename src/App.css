@@ -8,10 +8,15 @@
 }
 
 .game-container {
-  position: relative;
+  position: fixed;
   width: 240px;
   height: 208px;
   background: url(/public/map.png) no-repeat no-repeat;
   transform: scale(3);
   image-rendering: pixelated;
+}
+
+.ui {
+  position: fixed;
+  top: 5%;
 }

@@ -8,6 +8,9 @@
     transition: transform 0.4s;
     position: absolute;
     width: 16px;
+    height: 16px;
+    display: flex;
+    justify-content: center;
 }
 
 .character-shadow {
@@ -43,7 +46,6 @@
 
 .character-name-container {
     position: absolute;
-    left: -50%;
     top: -9px;
     font-size: 5px;
     padding: 1px 2px 1px;

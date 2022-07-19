@@ -17,7 +17,7 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 function CoinSpawn() {
-    const spawnDelay = [ 3000, 5000, 7000 ];
+    const spawnDelay = [ 5000, 7000, 10000 ];
     setTimeout(() => {
       const { x, y } = SafeSpot()
       const coinRef = ref(database, `coins/${GetCoordinates(x, y)}`)
