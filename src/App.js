@@ -13,10 +13,12 @@ import {
   remove,
   query,
   orderByChild,
+  limitToLast,
 } from "firebase/database";
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import BlockedSpaces from "./components/BlockedSpaces";
+import ChatMessage from "./components/ChatMessage";
 import CoinSpawn from "./components/CoinSpawn";
 import CreateName from "./components/CreateName";
 import GetCoordinates from "./components/GetCoordinates";
@@ -38,15 +40,36 @@ function App() {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const database = getDatabase(app);
-
+  
   const [players, setPlayers] = useState({});
   const [addedPlayer, setAddedPlayer] = useState([])
   const [playerId, setPlayerId] = useState(null);
   const [playerRef, setPlayerRef] = useState(null);
-
+  const [name, setName] = useState('')
+  
   const [coins, setCoins] = useState({});
 
+  const [chat, setChat] = useState(null);
+
+  const [text, setText] = useState('')
+  
   const keypress = useRef(false);
+
+  function GrabCoin(x, y) {
+    const key = GetCoordinates(x, y);
+    if (coins[key]) {
+      remove(ref(database, `coins/${key}`));
+      update(playerRef, {
+        coins: players[playerId].coins + 1,
+      });
+      get(ref(database, `coins`)).then((snapshot) => {
+        const coins = snapshot.val();
+        if (Object.keys(coins).length < 10) {
+          CoinSpawn();
+        }
+      });
+    }
+  }
 
   // player movement
   useEffect(() => {
@@ -95,22 +118,6 @@ function App() {
     };
   }, [players, playerRef, playerId]);
 
-  function GrabCoin(x, y) {
-    const key = GetCoordinates(x, y);
-    if (coins[key]) {
-      remove(ref(database, `coins/${key}`));
-      update(playerRef, {
-        coins: players[playerId].coins + 1,
-      });
-      get(ref(database, `coins`)).then((snapshot) => {
-        const coins = snapshot.val();
-        if (Object.keys(coins).length < 10) {
-          CoinSpawn();
-        }
-      });
-    }
-  }
-
   function InitGame() {
     const allPlayersRef = query(
       ref(database, `players`),
@@ -118,6 +125,11 @@ function App() {
       equalTo(true)
     );
     const allCoinsRef = ref(database, `coins`);
+    const allChatRef = query(
+      ref(database, `chat`),
+      orderByChild("time"),
+      limitToLast(10)
+    );
 
     onValue(allPlayersRef, (snapshot) => {
       setPlayers(snapshot.val());
@@ -127,6 +139,9 @@ function App() {
     })
     onValue(allCoinsRef, (snapshot) => {
       setCoins(snapshot.val());
+    });
+    onValue(allChatRef, (snapshot) => {
+      setChat(snapshot.val());
     });
     CoinSpawn();
   }
@@ -166,15 +181,13 @@ function App() {
           });
         });
 
-        // remove player from database when logged out
+        // set character log in status to false on disconnect
         onDisconnect(player).update({
           loggedIn: false,
         });
 
         InitGame();
         refer.current.focus();
-      } else {
-        // logged out
       }
     });
     signInAnonymously(auth);
@@ -184,14 +197,47 @@ function App() {
     update(playerRef, {
       name: e.target.value,
     });
+    setName(e.target.value)
   };
+
+  const handleText = (e) => {
+    setText(e.target.value)
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+      const chatRef = ref(database, `chat/${new Date()}`)
+      set(chatRef, {
+        name: name.toUpperCase(),
+        message: text,
+        time: new Date()
+      })
+      setText("")
+  }
 
   return (
     <div className="App">
       <div className="ui">
-        <div>
+        <div className="player-name">
           <label htmlFor="player-name">Your Name</label>
           <input id="player-name" maxLength={10} onChange={handleChange} autoComplete="off"/>
+        </div>
+        <div className="chat">
+          <div className="messages">
+          {chat && 
+            Object.entries(chat ?? {}).map(([key, message]) => {
+              return (
+                <ChatMessage
+                  key={key}
+                  name={message.name}
+                  message={message.message}
+                />
+            );
+          })}
+          </div>
+          <form onSubmit={handleSubmit} className="message-input">
+            <input id="chat" value={text} maxLength={30} onChange={handleText} autoComplete="off"/>
+          </form>
         </div>
       </div>
       <div className="game-container" ref={refer}>
