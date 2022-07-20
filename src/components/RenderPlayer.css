@@ -13,6 +13,10 @@
     justify-content: center;
 }
 
+.you {
+  z-index: 1;
+}
+
 .character-shadow {
     background: url(/public/shadow.png) no-repeat no-repeat;
     top: 3px;
@@ -58,6 +62,6 @@
 }
 
 .character-coins {
-    margin-left: 1px;
+    margin-left: 2px;
     color: gold;
 }
