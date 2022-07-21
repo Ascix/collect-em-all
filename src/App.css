@@ -5,6 +5,8 @@
     margin: 0;
     padding: 0;
     height: 100vh;
+    font-size: 14px;
+    font-family: 'Kanit', sans-serif;
 }
 
 .game-container {
@@ -19,6 +21,14 @@
 .ui {
   position: fixed;
   top: 2%;
+  display: flex;
+  flex-direction: row;
+}
+
+.player-name input {
+  height: 30px;
+  border: 1px solid black;
+  border-radius: 8px;
 }
 
 .chat {
@@ -27,14 +37,23 @@
   width: 300px;
   display: flex;
   flex-direction: column;
+  bottom: 0;
+  padding: 3px;
+  border-radius: 8px;
+  background-color: white;
 }
 
 .messages {
-  overflow-y: scroll;
+  overflow-y: auto;
   height: 100px;
 }
 
 .message-input {
+  width: 100%;
+  border-top: 1px solid black;
+}
 
-  width: 100%
+.chat input, .chat input:focus {
+  border: none;
+  outline: none;
 }

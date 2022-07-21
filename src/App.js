@@ -17,7 +17,9 @@ import {
 } from "firebase/database";
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
+import Toast from 'react-bootstrap/Toast';
 import BlockedSpaces from "./components/BlockedSpaces";
+import ChatboxScroll from "./components/ChatboxScroll";
 import ChatMessage from "./components/ChatMessage";
 import CoinSpawn from "./components/CoinSpawn";
 import CreateName from "./components/CreateName";
@@ -25,6 +27,7 @@ import GetCoordinates from "./components/GetCoordinates";
 import RandomFromArray from "./components/RandomFromArray";
 import RenderCoin from "./components/RenderCoin";
 import RenderPlayer from "./components/RenderPlayer";
+import Skins from "./components/Skins";
 
 function App() {
   const firebaseConfig = {
@@ -36,7 +39,7 @@ function App() {
     messagingSenderId: "485338782363",
     appId: "1:485338782363:web:8164385fc4506beebb443e",
   };
-
+  
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const database = getDatabase(app);
@@ -49,11 +52,14 @@ function App() {
   
   const [coins, setCoins] = useState({});
 
+  const [skins, setSkins] = useState({});
+
   const [chat, setChat] = useState(null);
 
   const [text, setText] = useState('')
   
   const keypress = useRef(false);
+
 
   function GrabCoin(x, y) {
     const key = GetCoordinates(x, y);
@@ -127,7 +133,6 @@ function App() {
     const allCoinsRef = ref(database, `coins`);
     const allChatRef = query(
       ref(database, `chat`),
-      orderByChild("time"),
       limitToLast(10)
     );
 
@@ -145,6 +150,9 @@ function App() {
     });
     CoinSpawn();
   }
+  useEffect(() => {
+    setTimeout(ChatboxScroll(), 1)
+  },[chat])
 
   const refer = useRef(null);
 
@@ -172,27 +180,51 @@ function App() {
           set(player, {
             id: user.uid,
             name: playerData.name || name,
-            direction: "right",
+            direction: playerData.direction || "right",
             color: playerData.color || RandomFromArray(playerColors),
             x: playerData.x || 3,
             y: playerData.y || 5,
             coins: playerData.coins || 0,
             loggedIn: true,
-          });
-        });
+            DigitalCrafts: playerData.DigitalCrafts || false,
+            skins: {
+              blue: {
+                owned: playerData.skins.blue.owned || "false"
+              },
+              red: {
+                owned: playerData.skins.red.owned || "false"
+              },
+              orange: {
+                owned: playerData.skins.orange.owned || "false"
+              },
+              yellow: {
+                owned: playerData.skins.yellow.owned || "false"
+              },
+              green: {
+                owned: playerData.skins.green.owned || "false"
+              },
+              purple: {
+                owned: playerData.skins.purple.owned || "false"
+              },
 
+            }
+          });
+          setSkins(playerData.skins)
+          setName(playerData.name || name)
+        });
+        
         // set character log in status to false on disconnect
         onDisconnect(player).update({
           loggedIn: false,
         });
-
+        
         InitGame();
         refer.current.focus();
       }
     });
     signInAnonymously(auth);
   }, []);
-
+  
   const handleChange = (e) => {
     update(playerRef, {
       name: e.target.value,
@@ -204,40 +236,68 @@ function App() {
     setText(e.target.value)
   };
 
+
+  
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (text === "$DigitalCrafts")  {
+      if (players[playerId].DigitalCrafts === false) {
+        update(playerRef, {
+          coins: players[playerId].coins + 1000,
+          DigitalCrafts: true
+        });
+      }
+    }
+    else {
       const chatRef = ref(database, `chat/${new Date()}`)
       set(chatRef, {
         name: name.toUpperCase(),
-        message: text,
-        time: new Date()
+        message: text
       })
-      setText("")
+    }
+    setText("")
   }
 
   return (
     <div className="App">
       <div className="ui">
-        <div className="player-name">
-          <label htmlFor="player-name">Your Name</label>
-          <input id="player-name" maxLength={10} onChange={handleChange} autoComplete="off"/>
-        </div>
-        <div className="chat">
-          <div className="messages">
-          {chat && 
-            Object.entries(chat ?? {}).map(([key, message]) => {
-              return (
-                <ChatMessage
-                  key={key}
-                  name={message.name}
-                  message={message.message}
-                />
-            );
-          })}
+        <div className="left">
+          <div className="player-name">
+            <label htmlFor="player-name">Name</label><br></br>
+            <input id="player-name" value={name} maxLength={10} onChange={handleChange} autoComplete="off"/>
           </div>
-          <form onSubmit={handleSubmit} className="message-input">
-            <input id="chat" value={text} maxLength={30} onChange={handleText} autoComplete="off"/>
-          </form>
+          <div className="chat">
+            <div className="messages" id="chatbox">
+            {chat && 
+              Object.entries(chat ?? {}).map(([key, message]) => {
+                return (
+                  <ChatMessage
+                    key={key}
+                    name={message.name}
+                    message={message.message}
+                  />
+              );
+            })}
+            </div>
+            <form onSubmit={handleSubmit} className="message-input">
+              <input id="chat" value={text} maxLength={30} onChange={handleText} autoComplete="off"/>
+            </form>
+          </div>
+        </div>
+        <div className="skins">
+        {playerRef &&
+          Object.entries(skins ?? {}).map(([key, skin]) => {
+            return (
+              <div key={key}>
+              <Skins
+                color={key}
+                owned={skin.owned}
+                  />
+              </div>
+            )
+          })
+          }
+
         </div>
       </div>
       <div className="game-container" ref={refer}>

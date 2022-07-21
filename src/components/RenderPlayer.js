@@ -5,7 +5,7 @@ function RenderPlayer(props) {
     return (
         <div className={character} style={{ transform: `translate3d(${left},${top},0)` }}>
           <div className="character-shadow grid-cell"></div>
-          <div className="character-sprite grid-cell"  color={color} direction={direction}></div>
+          <div className="character-sprite grid-cell" color={color} direction={direction}></div>
           <div className="character-name-container">
             <span className="character-name" >{name}</span>
             <span className="character-coins">{coins}</span>
