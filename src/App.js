@@ -78,6 +78,7 @@ function App() {
         },
         coins: players[playerId].coins - 100
       });
+      setSkins(players[playerId].skins)
     }
     else {
       update(playerRef, {
@@ -178,9 +179,6 @@ function App() {
       limitToLast(10)
     );
 
-    onValue(playerRef, (snapshot) => {
-      setPlayers(snapshot.val());
-    });
     onValue(allPlayersRef, (snapshot) => {
       setPlayers(snapshot.val());
     });
@@ -198,6 +196,9 @@ function App() {
   useEffect(() => {
     setTimeout(ChatboxScroll(), 1)
   },[chat])
+  useEffect(() => {
+    setSkins(players[playerId]?.skins);
+  },[show])
 
   const refer = useRef(null);
 
@@ -211,14 +212,6 @@ function App() {
         const player = ref(database, `players/${user.uid}`);
         setPlayerRef(player);
         const name = CreateName();
-        const playerColors = [
-          "blue",
-          "red",
-          "orange",
-          "yellow",
-          "green",
-          "purple",
-        ];
 
         get(player).then((snapshot) => {
           const playerData = snapshot.val() || {};
@@ -316,7 +309,7 @@ function App() {
           </div>
         </div>
         <div className="skins">
-        {playerRef &&
+        {skins &&
           Object.entries(skins ?? {}).map(([key, skin]) => {
             return (
               <div key={key}>
