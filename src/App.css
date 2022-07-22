@@ -23,6 +23,7 @@
   top: 2%;
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .player-name input {
@@ -49,18 +50,40 @@
 }
 
 .message-input {
-  width: 100%;
   border-top: 1px solid black;
 }
 
 .chat input, .chat input:focus {
+  width: 280px;
   border: none;
   outline: none;
 }
 
-.skins{
+.skin-ui {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid black;
+  border-radius: 8px;
+  background-color: white;
+  height: 180px;
+  width: 200px;
+  margin-left: 20px;
+}
+
+h4 {
+  margin-top: 5%;
+}
+
+.skins {
+  margin-top: 13%;
+  padding-left: 9px;
+  max-width: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .skin {

@@ -10,7 +10,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: aquamarine;
+  background: rgb(105, 165, 243);
 }
 
 code {
