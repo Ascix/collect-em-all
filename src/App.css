@@ -57,3 +57,47 @@
   border: none;
   outline: none;
 }
+
+.skins{
+  display: flex;
+  flex-direction: row;
+}
+
+.skin {
+  overflow: hidden;
+  background: url(/public/characters.png);
+  background-size: auto 192px;
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  margin-right: 10px;
+}
+
+.skin:hover {
+  background-position-x: -32px;
+}
+
+.skin[color="red"]{
+background-position-y: -32px;
+}
+.skin[color="orange"] {
+background-position-y: -64px;
+}
+.skin[color="yellow"] {
+background-position-y: -96px;
+}
+.skin[color="green"]{
+background-position-y: -128px;
+}
+.skin[color="purple"]{
+background-position-y: -160px;
+}
+
+.false {
+  filter: grayscale(95%)
+}
+
+button {
+  border: none;
+  cursor: pointer;
+}

@@ -17,7 +17,8 @@ import {
 } from "firebase/database";
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-import Toast from 'react-bootstrap/Toast';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 import BlockedSpaces from "./components/BlockedSpaces";
 import ChatboxScroll from "./components/ChatboxScroll";
 import ChatMessage from "./components/ChatMessage";
@@ -27,7 +28,6 @@ import GetCoordinates from "./components/GetCoordinates";
 import RandomFromArray from "./components/RandomFromArray";
 import RenderCoin from "./components/RenderCoin";
 import RenderPlayer from "./components/RenderPlayer";
-import Skins from "./components/Skins";
 
 function App() {
   const firebaseConfig = {
@@ -59,7 +59,49 @@ function App() {
   const [text, setText] = useState('')
   
   const keypress = useRef(false);
+  
+  const [show, setShow] = useState(false);
+  const [color, setColor] = useState('')
+  const [colorOwned, setColorOwned] = useState(false)
+  const [disable, setDisable] = useState(false)
 
+  const handleClose = () => setShow(false);
+  
+  const handleYes = (() => {
+    setShow(false)
+    if(players[playerId].skins[color] !== true) {
+      update(playerRef, {
+        color: color,
+        skins: {
+          ...players[playerId].skins,
+          [color]: true
+        },
+        coins: players[playerId].coins - 100
+      });
+    }
+    else {
+      update(playerRef, {
+        color: color
+      });
+    }
+  })
+  
+  function Skins(props) {
+    const handleShow = (() => {
+      setShow(true)
+      setColor(color)
+      setColorOwned(players[playerId].skins[color])
+      if (players[playerId].skins[color] !== "true" && (players[playerId].coins) < 100) {
+        setDisable(true)
+      }
+    })
+    const { color, owned } = props
+    return(
+      <>
+            <button className={"skin " + owned} onClick={handleShow} color={color}></button>          
+      </>
+    )
+}
 
   function GrabCoin(x, y) {
     const key = GetCoordinates(x, y);
@@ -136,6 +178,9 @@ function App() {
       limitToLast(10)
     );
 
+    onValue(playerRef, (snapshot) => {
+      setPlayers(snapshot.val());
+    });
     onValue(allPlayersRef, (snapshot) => {
       setPlayers(snapshot.val());
     });
@@ -181,37 +226,25 @@ function App() {
             id: user.uid,
             name: playerData.name || name,
             direction: playerData.direction || "right",
-            color: playerData.color || RandomFromArray(playerColors),
+            color: playerData.color || "blue",
             x: playerData.x || 3,
             y: playerData.y || 5,
             coins: playerData.coins || 0,
             loggedIn: true,
             DigitalCrafts: playerData.DigitalCrafts || false,
             skins: {
-              blue: {
-                owned: playerData.skins.blue.owned || "false"
-              },
-              red: {
-                owned: playerData.skins.red.owned || "false"
-              },
-              orange: {
-                owned: playerData.skins.orange.owned || "false"
-              },
-              yellow: {
-                owned: playerData.skins.yellow.owned || "false"
-              },
-              green: {
-                owned: playerData.skins.green.owned || "false"
-              },
-              purple: {
-                owned: playerData.skins.purple.owned || "false"
-              },
-
+              blue: playerData.skins?.blue || true,
+              red: playerData.skins?.red || false,
+              orange: playerData.skins?.orange || false,
+              yellow: playerData.skins?.yellow || false,
+              green: playerData.skins?.green || false,
+              purple: playerData.skins?.purple || false,
             }
           });
           setSkins(playerData.skins)
           setName(playerData.name || name)
         });
+
         
         // set character log in status to false on disconnect
         onDisconnect(player).update({
@@ -236,8 +269,6 @@ function App() {
     setText(e.target.value)
   };
 
-
-  
   const handleSubmit = (e) => {
     e.preventDefault()
     if (text === "$DigitalCrafts")  {
@@ -291,13 +322,43 @@ function App() {
               <div key={key}>
               <Skins
                 color={key}
-                owned={skin.owned}
+                owned={skin}
                   />
               </div>
             )
           })
           }
-
+          <Modal show={show} onHide={handleClose}>
+              {colorOwned ? 
+              <><Modal.Header closeButton>
+                  <Modal.Title>Change Skin?</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Would you like to change to this skin?</Modal.Body></> : 
+              <><Modal.Header closeButton>
+                  <Modal.Title>Buy Skin?</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>You do not own this skin. Would you like to buy it for 100 coins?</Modal.Body></>
+              }
+              <Modal.Footer>
+              {colorOwned ? 
+              <><Button variant="success" onClick={handleYes}>
+                Yes
+              </Button>
+              <Button variant="danger" onClick={handleClose}>
+                No
+              </Button></> : 
+              !disable ? <><Button variant="success" onClick={handleYes} disabled={disable}>
+                Yes
+              </Button>
+              <Button variant="danger" onClick={handleClose}>
+                No
+              </Button></> : 
+              <Button variant="danger" onClick={handleClose}>
+                You do not have enough coins!
+              </Button>
+              }
+              </Modal.Footer>
+        </Modal>
         </div>
       </div>
       <div className="game-container" ref={refer}>
