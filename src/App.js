@@ -25,7 +25,6 @@ import ChatMessage from "./components/ChatMessage";
 import CoinSpawn from "./components/CoinSpawn";
 import CreateName from "./components/CreateName";
 import GetCoordinates from "./components/GetCoordinates";
-import RandomFromArray from "./components/RandomFromArray";
 import RenderCoin from "./components/RenderCoin";
 import RenderPlayer from "./components/RenderPlayer";
 
@@ -46,7 +45,6 @@ function App() {
 
   //player system
   const [players, setPlayers] = useState({});
-  const [addedPlayer, setAddedPlayer] = useState([]);
   const [playerId, setPlayerId] = useState(null);
   const [playerRef, setPlayerRef] = useState(null);
 
@@ -61,9 +59,6 @@ function App() {
 
     onValue(allPlayersRef, (snapshot) => {
       setPlayers(snapshot.val());
-    });
-    onChildAdded(allPlayersRef, (snapshot) => {
-      setAddedPlayer(snapshot.val());
     });
     onValue(allCoinsRef, (snapshot) => {
       setCoins(snapshot.val());
@@ -86,6 +81,14 @@ function App() {
 
         get(player).then((snapshot) => {
           const playerData = snapshot.val() || {};
+          const playerSkins = {
+            blue: playerData.skins?.blue || true,
+            red: playerData.skins?.red || false,
+            orange: playerData.skins?.orange || false,
+            yellow: playerData.skins?.yellow || false,
+            green: playerData.skins?.green || false,
+            purple: playerData.skins?.purple || false,
+          }
           set(player, {
             id: user.uid,
             name: playerData.name || CreateName(),
@@ -96,16 +99,9 @@ function App() {
             coins: playerData.coins || 0,
             loggedIn: true,
             DigitalCrafts: playerData.DigitalCrafts || false,
-            skins: {
-              blue: playerData.skins?.blue || true,
-              red: playerData.skins?.red || false,
-              orange: playerData.skins?.orange || false,
-              yellow: playerData.skins?.yellow || false,
-              green: playerData.skins?.green || false,
-              purple: playerData.skins?.purple || false,
-            },
+            skins: playerSkins
           });
-          setSkins(playerData.skins);
+          setSkins(playerSkins);
           setName(playerData.name || name);
         });
 
@@ -230,6 +226,10 @@ function App() {
       set(chatRef, {
         name: name.toUpperCase(),
         message: text,
+        player: playerId
+      });
+      update(playerRef, {
+        message: text
       });
     }
     setText("");
@@ -238,13 +238,20 @@ function App() {
   //skin system
   const [skins, setSkins] = useState({});
   const [show, setShow] = useState(false);
-  const [color, setColor] = useState("");
+  const [showStore, setShowStore] = useState(false);
+  const [color, setColor] = useState('');
   const [colorOwned, setColorOwned] = useState(false);
   const [disable, setDisable] = useState(false);
-  const handleClose = () => setShow(false);
+
+
+  const handleClose = () => {
+    setShow(false);
+    setShowStore(false);
+  }
 
   const handleYes = () => {
     setShow(false);
+    setShowStore(false);
     if (players[playerId].skins[color] !== true) {
       update(playerRef, {
         color: color,
@@ -261,21 +268,16 @@ function App() {
       });
     }
   };
-
+  
   //render skins
   function Skins(props) {
+    const { color, owned } = props;
     const handleShow = () => {
       setShow(true);
       setColor(color);
       setColorOwned(players[playerId].skins[color]);
-      if (
-        players[playerId].skins[color] !== "true" &&
-        players[playerId].coins < 100
-      ) {
-        setDisable(true);
-      }
     };
-    const { color, owned } = props;
+
     return (
       <>
         <button
@@ -286,10 +288,43 @@ function App() {
       </>
     );
   }
+
+  function Store(props) {
+    const { color, owned } = props;
+
+    const handleStore = () => {
+      setShowStore(true);
+      setColor(color);
+      setColorOwned(players[playerId].skins[color]);
+      console.log(players[playerId].skins[color])
+      console.log(players[playerId].coins)
+      if (
+        players[playerId].skins[color] !== "true" &&
+        players[playerId].coins < 100
+      ) {
+        setDisable(true);
+      }
+      else {
+        setDisable(false)
+      }
+    }
+    return (
+      <>
+        <button
+          className={"skin " + owned}
+          onClick={handleStore}
+          color={color}
+        ></button>
+      </>
+    );
+  }
   useEffect(() => {
     setSkins(players[playerId]?.skins);
-  }, [show]);
+  }, [playerId, players, show, showStore]);
 
+  const chats = Object.keys(chat?? {})
+  const latestChatKey = chats?.[chats.length -1]
+  const latestChat = chat?.[latestChatKey]
   return (
     <div className="App">
       <div className="ui">
@@ -343,25 +378,10 @@ function App() {
               );
             })}
           <Modal show={show} onHide={handleClose}>
-            {colorOwned ? (
-              <>
-                <Modal.Header closeButton>
-                  <Modal.Title>Change Skin?</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>Would you like to change to this skin?</Modal.Body>
-              </>
-            ) : (
-              <>
-                <Modal.Header closeButton>
-                  <Modal.Title>Buy Skin?</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <Skins color={color} /><br></br>
-                  You do not own this skin. Would you like to buy it for 100
-                  coins?
-                </Modal.Body>
-              </>
-            )}
+            <Modal.Header closeButton>
+              <Modal.Title>Change Skin?</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Would you like to change to this skin?</Modal.Body>
             <Modal.Footer>
               {colorOwned ? (
                 <>
@@ -372,24 +392,50 @@ function App() {
                     No
                   </Button>
                 </>
-              ) : !disable ? (
-                <>
-                  <Button
-                    variant="success"
-                    onClick={handleYes}
-                    disabled={disable}
-                  >
+              ) : (
+                <Button variant="danger" onClick={handleClose}>
+                  You do not own this skin!
+                </Button>
+              )}
+            </Modal.Footer>
+          </Modal>
+          </div>
+        </div>
+        <div className="store-ui">
+          <h4>
+            Store
+          </h4>
+          <div className="store">
+          {skins &&
+            Object.entries(skins ?? {}).map(([key, skin]) => {
+              return (
+                <div key={key}>
+                  <Store color={key} owned={skin} />
+                </div>
+              );
+            })}
+          <Modal show={showStore} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Buy Skin?</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Would you like to buy this skin for 100 coins?</Modal.Body>
+            <Modal.Footer>
+              {colorOwned ? (
+<Button variant="danger" onClick={handleClose}>
+              You already own this skin!
+            </Button>
+              ) : disable ? (
+                <Button variant="danger" onClick={handleClose}>
+                  You do not have enough coins!
+                </Button>
+              ) : <>
+                  <Button variant="success" onClick={handleYes}>
                     Yes
                   </Button>
                   <Button variant="danger" onClick={handleClose}>
                     No
                   </Button>
-                </>
-              ) : (
-                <Button variant="danger" onClick={handleClose}>
-                  You do not have enough coins!
-                </Button>
-              )}
+                </> }
             </Modal.Footer>
           </Modal>
           </div>
@@ -408,6 +454,8 @@ function App() {
                 left={16 * player.x + "px"}
                 top={16 * player.y - 4 + "px"}
                 character={playerId === key ? "character you" : "character"}
+                latestChat={latestChat}
+                playerId={player.id}
               />
             );
           })}

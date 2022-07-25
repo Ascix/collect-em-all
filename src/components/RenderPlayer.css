@@ -65,3 +65,23 @@
     margin-left: 2px;
     color: gold;
 }
+
+.on {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: -28px;
+  border: 1px solid black;
+  border-radius: 2px;
+  background-color: white;
+  font-size: 6px;
+  width: 50px;
+  min-height: 20px;
+  height: auto;
+  overflow-wrap: anywhere;
+}
+
+.off {
+  display: none;
+}
