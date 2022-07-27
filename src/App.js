@@ -186,14 +186,14 @@ function App() {
 
   function GrabPokeball(x, y) {
     const key = GetCoordinates(x, y);
-    if (pokeballs[key]) {
+    if (pokeballs?.[key]) {
       remove(ref(database, `pokeballs/${key}`));
       update(playerRef, {
         pokeballs: players[playerId].pokeballs + 1,
       });
       get(ref(database, `pokeballs`)).then((snapshot) => {
-        const pokeballs = snapshot.val();
-        if (Object.keys(pokeballs).length < 10) {
+        const pokeballs = snapshot.val() ?? {};
+        if (Object.keys(pokeballs).length < 15) {
           PokeballSpawn();
         }
       });
