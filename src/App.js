@@ -191,13 +191,13 @@ function App() {
       update(playerRef, {
         pokeballs: players[playerId].pokeballs + 1,
       });
-      get(ref(database, `pokeballs`)).then((snapshot) => {
-        const pokeballs = snapshot.val() ?? {};
-        if (Object.keys(pokeballs).length < 15) {
-          PokeballSpawn();
-        }
-      });
     }
+    get(ref(database, `pokeballs`)).then((snapshot) => {
+      const pokeballs = snapshot.val() ?? {};
+      if (Object.keys(pokeballs).length < 15) {
+        PokeballSpawn();
+      }
+    });
   }
 
   //chat system
@@ -371,7 +371,7 @@ function App() {
 
   return (
     <div className="App">
-      <p className="title">Collect 'em All</p>
+      <img src="title.png" className="title" alt="game logo"></img>
       <div className="ui">
         <div className="left">
           <div className="player-name">
@@ -404,6 +404,7 @@ function App() {
                 maxLength={30}
                 onChange={handleText}
                 autoComplete="off"
+                placeholder="Send a message"
               />
             </form>
           </div>

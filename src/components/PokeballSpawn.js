@@ -17,7 +17,7 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
 function PokeballSpawn() {
-    const spawnDelay = [ 3000, 5000, 7000 ];
+    const spawnDelay = [ 1000, 3000, 7000 ];
     setTimeout(() => {
       const { x, y } = SafeSpot()
       const pokeballRef = ref(database, `pokeballs/${GetCoordinates(x, y)}`)

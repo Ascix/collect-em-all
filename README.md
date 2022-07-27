@@ -1,9 +1,9 @@
-# Pokemon TCG Collector
+# Collect 'em All
 
 Collect 'em All is a React based browser game where you can socialize with people and collect currency (pokeballs) to purchase new skins (Pokemon).
 
 My website is hosted at this url!
-https://pokemontcgcollector.netlify.app
+https://https://collect-em-all.netlify.app/
 
 ---
 
