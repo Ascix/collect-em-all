@@ -27,6 +27,10 @@ import GetCoordinates from "./components/GetCoordinates";
 import RenderPokeball from "./components/RenderPokeball";
 import RenderPlayer from "./components/RenderPlayer";
 import RandomFromArray from "./components/RandomFromArray";
+import RarePokemon, { rare } from "./components/RarePokemon";
+import UncommonPokemon, { uncommon } from "./components/UncommonPokemon";
+import CommonPokemon, { common } from "./components/CommonPokemon";
+import LegendaryPokemon from "./components/LegendaryPokemon";
 
 
 function App() {
@@ -197,6 +201,7 @@ function App() {
   //chat system
   const [chat, setChat] = useState(null);
   const [text, setText] = useState("");
+  const [time, setTime] = useState(new Date())
 
   const handleText = (e) => {
     setText(e.target.value);
@@ -216,7 +221,7 @@ function App() {
         });
       }
     } else {
-      const chatRef = ref(database, `chat/${new Date()}`);
+      const chatRef = ref(database, `chat/${time}`);
       set(chatRef, {
         name: name.toUpperCase(),
         message: text,
@@ -283,186 +288,36 @@ function App() {
     );
   }
   
-  const common = [
-    "1",
-    "4",
-    "7",
-    "10",
-    "13",
-    "16",
-    "19",
-    "21",
-    "23",
-    "25",
-    "27",
-    "29",
-    "32",
-    "35",
-    "37",
-    "39",
-    "41",
-    "43",
-    "46",
-    "48",
-    "50",
-    "52",
-    "54",
-    "56",
-    "58",
-    "60",
-    "63",
-    "66",
-    "69",
-    "72",
-    "74",
-    "77",
-    "79",
-    "81",
-    "84",
-    "86",
-    "88",
-    "90",
-    "92",
-    "96",
-    "98",
-    "100",
-    "102",
-    "104",
-    "109",
-    "111",
-    "116",
-    "118",
-    "120",
-    "129",
-    "147"
-]
-const uncommon = [
-  "2",
-  "5",
-  "8",
-  "14",
-  "17",
-  "20",
-  "22",
-  "24",
-  "26",
-  "28",
-  "30",
-  "33",
-  "36",
-  "38",
-  "40",
-  "42",
-  "44",
-  "47",
-  "49",
-  "51",
-  "53",
-  "55",
-  "57",
-  "59",
-  "61",
-  "64",
-  "67",
-  "70",
-  "73",
-  "75",
-  "78",
-  "80",
-  "82",
-  "85",
-  "87",
-  "89",
-  "91",
-  "93",
-  "95",
-  "97",
-  "99",
-  "101",
-  "103",
-  "105",
-  "108",
-  "110",
-  "112",
-  "117",
-  "119",
-  "121",
-  "130",
-  "133",
-  "138",
-  "140",
-  "148"
-]
-const rare = [
-  "3",
-  "6",
-  "9",
-  "12",
-  "15",
-  "18",
-  "31",
-  "34",
-  "45",
-  "62",
-  "65",
-  "68",
-  "71",
-  "83",
-  "94",
-  "106",
-  "107",
-  "113",
-  "114",
-  "115",
-  "122",
-  "123",
-  "124",
-  "125",
-  "126",
-  "127",
-  "128",
-  "131",
-  "132",
-  "134",
-  "135",
-  "136",
-  "137",
-  "139",
-  "141",
-  "142",
-  "143",
-  "149",
-]
-const legendary = [
-  "144",
-  "145",
-  "146",
-  "150",
-  "151",
-]
+
   const [store, setStore] = useState([])
-  useEffect(() => {
-    function GenerateStore() {
-      let set = new Set()
-      let RNG = Math.random() * (100 - 1) + 1
-      while (set.size < 5) {
-          if(RNG > 1 && RNG <= 10) {
-              set.add(RandomFromArray(rare))
-          }
-          else if(RNG > 10 && RNG <= 55) {
-              set.add(RandomFromArray(uncommon))
-          }
-          else if(RNG > 55 && RNG <= 100) {
-              set.add(RandomFromArray(common))
-          }
-          else {
-              set.add(RandomFromArray(legendary))
-          }
+  function GenerateStore() {
+    let set = new Set()
+    let RNG = 0
+
+    while (set.size < 5) {
+      RNG = Math.trunc(Math.random() * (100 - 1) + 1)
+      if(RNG > 1 && RNG <= 10) {
+        set.add(RarePokemon())
+        }
+        else if(RNG > 10 && RNG <= 55) {
+            set.add(UncommonPokemon())
+        }
+        else if(RNG > 55 && RNG <= 100) {
+            set.add(CommonPokemon())
+        }
+        else {
+          set.add(LegendaryPokemon())
+        }
       }
       return set
     }
-    const newStore = GenerateStore()
-    setStore(newStore)
+    const handleRefresh = () => {
+      const newStore = GenerateStore()
+      setStore(newStore)
+    }
+  useEffect(() => {
+      const newStore = GenerateStore()
+      setStore(newStore)
   }, []);
 
   const [price, setPrice] = useState('')
@@ -474,21 +329,22 @@ const legendary = [
       setShowStore(true);
       setPokemon(pokemon);
       setPokemonOwned(players[playerId].skins[pokemon]);
+      let currentPrice = 25000
+
       if (common.includes(pokemon)) {
-        setPrice(100)
+        currentPrice = 100
       }
       else if ((uncommon.includes(pokemon))) {
-        setPrice(500)
+        currentPrice = 500      
       }
       else if ((rare.includes(pokemon))) {
-        setPrice(1000)
+        currentPrice = 1000
       }
-      else if ((legendary.includes(pokemon))) {
-        setPrice(25000)
-      }
+      setPrice(currentPrice)
+
       if (
         !Object.keys(players[playerId].skins).includes(pokemon) &&
-        players[playerId].pokeballs < price
+        players[playerId]?.pokeballs < currentPrice
       ) {
         setDisable(true);
       }
@@ -598,6 +454,7 @@ const legendary = [
             PokeMart
           </h4>
           <div className="store">
+            <div className="items">
           {
             [...store]?.map(item => {
               return (
@@ -606,6 +463,12 @@ const legendary = [
                 </div>
               );
             })}
+            </div>
+            <div>
+              <Button className="btn-sm" variant="secondary" onClick={handleRefresh}>
+                refresh
+              </Button>
+            </div>
           <Modal show={showStore} onHide={handleClose}>
             <Modal.Header closeButton>
               <Modal.Title>Buy Pokemon?</Modal.Title>

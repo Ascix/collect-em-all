@@ -83,6 +83,7 @@ h4 {
   align-items: center;
   flex-direction: row;
   flex-wrap: wrap;
+  margin-bottom: 7%;
 }
 
 .skin {
@@ -109,15 +110,31 @@ h4 {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+}
+
+.items {
+  display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.store button {
+  position:absolute;
+  top: 77%;
+  left: 92%
+}
+
+.skin:hover {
+  transform: scaleX(-1)
 }
 
 .false {
   filter: grayscale(95%)
 }
 
-button {
-  border: none;
+img {
   cursor: pointer;
 }
