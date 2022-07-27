@@ -30,7 +30,6 @@ import RarePokemon, { rare } from "./components/RarePokemon";
 import UncommonPokemon, { uncommon } from "./components/UncommonPokemon";
 import CommonPokemon, { common } from "./components/CommonPokemon";
 import LegendaryPokemon from "./components/LegendaryPokemon";
-import PlayMusic from "./components/PlayMusic";
 
 function App() {
   const firebaseConfig = {
@@ -113,6 +112,7 @@ function App() {
       }
     });
     signInAnonymously(auth);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //name change system
@@ -126,6 +126,7 @@ function App() {
   };
   useEffect(() => {
     setName(players[playerId]?.name);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name]);
 
   // player movement
@@ -175,6 +176,7 @@ function App() {
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [players, playerRef, playerId]);
 
   const refer = useRef(null);
@@ -201,7 +203,7 @@ function App() {
   //chat system
   const [chat, setChat] = useState(null);
   const [text, setText] = useState("");
-  const [time, setTime] = useState(new Date());
+  const [time] = useState(new Date());
 
   const handleText = (e) => {
     setText(e.target.value);
@@ -423,7 +425,7 @@ function App() {
                   <Modal.Title>Switch Pokemon?</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  Would you like to switch to this Pokemon?
+                <Skins pokemon={pokemon} /> Would you like to switch to this Pokemon?
                 </Modal.Body>
                 <Modal.Footer>
                   {pokemonOwned ? (

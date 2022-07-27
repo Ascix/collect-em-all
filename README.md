@@ -1,70 +1,88 @@
-# Getting Started with Create React App
+# Pokemon TCG Collector
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Pokemon TCG Collector is a React based website designed to search through a database of Pokemon cards, look up card details, and add them to your collection.
 
-## Available Scripts
+My website is hosted at this url!
+https://pokemontcgcollector.netlify.app
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Table of Content
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Introduction
+2. Technologies
+3. Installation
+4. General Information
+5. Acknowledgements
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+### Introduction
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Pokemon TCG Collector was built as a React project as part of the April 2022 cohort at Digital Crafts. 
+![Pokemon TCG Collector Front Page](/public/frontpage.png)
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Technologies
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Material UI
+- JavaScript
+- HTML
+- CSS
+- React
+- Redux
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+### Installation
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+To run this web app start first by cloning the repository locally
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Make sure node and npm are installed
+<https://docs.npmjs.com/downloading-and-installing-node-js-and-npm>
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+We also installed the following packages below to develop the app
+- react
+- react-dom
+- react-router-dom
+- react-scripts
+- redux
+- pokemontcgsdk
+- @mui/material 
+- @emotion/react 
+- @emotion/styled
+- @redux-devtools/extension
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+### General Information
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+On the front page you will see the 3 newest released set of Pokemon cards.
+![Pokemon TCG Collector Front Page](/public/frontpage.png)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+If you click on the Search link in the Nav, it will direct you to the search page where you can look up a card and it will generate all the cards with that name.
+![Pokemon TCG Collector Search Page](/public/search.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
+You can click one of the cards and it will bring up the card details.
+![Pokemon TCG Collector Card Details](/public/card-details.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
+You can also click the Sets link in the Nav to look at all the released sets.
+![Pokemon TCG Collector All Sets](/public/all-sets.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
+From there, you can click one of the sets and it will render all the cards in that particular set.
+![Pokemon TCG Collector Set](/public/set.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Deployment
+In the Collection link in the Nav, can check out the cards you added to your collection.
+![Pokemon TCG Collector Collection Page](/public/collection.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+### Acknowledgements
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Special thanks to Professor Lachlan Heywood <https://github.com/lachieh> for giving me the knowledge to build this website.
