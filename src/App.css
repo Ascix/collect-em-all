@@ -9,18 +9,35 @@
     font-family: 'Kanit', sans-serif;
 }
 
+.title {
+  font-size: 48px;
+  color: white;
+    position:absolute;
+    top: 3%;
+    display: flex;
+    justify-content: center;
+}
+
 .game-container {
   position: fixed;
   width: 240px;
   height: 208px;
+  top: 25%;
+  left:19%;
   background: url(/public/map.png) no-repeat no-repeat;
   transform: scale(2);
   image-rendering: pixelated;
 }
 
+.right {
+  position: fixed;
+  top: 13%;
+  left: 60%;
+}
+
 .ui {
   position: fixed;
-  top: 2%;
+  top: 66%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -35,7 +52,7 @@
 .chat {
   border: 1px solid black;
   margin: 5% 0 5% 0;
-  width: 300px;
+  width: 500px;
   display: flex;
   flex-direction: column;
   bottom: 0;
@@ -103,10 +120,10 @@ h4 {
   width: 300px;
   overflow-y: auto;
   margin-left: 20px;
+  margin-top: 20px;
 }
 
 .store {
-  padding-left: 9px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -123,8 +140,8 @@ h4 {
 
 .store button {
   position:absolute;
-  top: 77%;
-  left: 92%
+  top: 90%;
+  left: 77%
 }
 
 .skin:hover {
@@ -137,4 +154,69 @@ h4 {
 
 img {
   cursor: pointer;
+}
+
+@media only screen and (max-width: 80px) and (min-height: 800px) {
+  .title {
+    top: 1%
+  }
+  .game-container{
+    left: 15%
+  }
+  .right {
+    left: 56%;
+  }
+  .store button {
+    position:absolute;
+    top: 90%;
+    left: 77%
+  }
+  .player-name input {
+    position: fixed;
+    top: 75%;
+    left: 5%;
+  }
+  .chat {
+    position: fixed;
+    width: 400px;
+    height: 100px;
+    top: 75%;
+    left: 5%;
+  }
+}
+
+@media only screen and (min-width: 801px) and (max-width: 1024px) {
+  .title {
+    top: 1%
+  }
+  .game-container{
+    left: 15%
+  }
+  .right {
+    left: 56%;
+  }
+  .store button {
+    position:absolute;
+    top: 90%;
+    left: 77%
+  }
+  .player-name input {
+    position: fixed;
+    top: 75%;
+    left: 5%;
+  }
+  .chat {
+    position: fixed;
+    width: 400px;
+    height: 100px;
+    top: 75%;
+    left: 5%;
+  }
+}
+
+@media only screen and (min-height: 800px) {
+  .ui {
+    position: fixed;
+    top: 60%;
+  }
 }

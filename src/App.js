@@ -26,12 +26,11 @@ import CreateName from "./components/CreateName";
 import GetCoordinates from "./components/GetCoordinates";
 import RenderPokeball from "./components/RenderPokeball";
 import RenderPlayer from "./components/RenderPlayer";
-import RandomFromArray from "./components/RandomFromArray";
 import RarePokemon, { rare } from "./components/RarePokemon";
 import UncommonPokemon, { uncommon } from "./components/UncommonPokemon";
 import CommonPokemon, { common } from "./components/CommonPokemon";
 import LegendaryPokemon from "./components/LegendaryPokemon";
-
+import PlayMusic from "./components/PlayMusic";
 
 function App() {
   const firebaseConfig = {
@@ -73,8 +72,9 @@ function App() {
     });
     PokeballSpawn();
   }
-
+  
   useEffect(() => {
+
     auth.onAuthStateChanged((user) => {
       if (user) {
         // logged in
@@ -82,7 +82,7 @@ function App() {
         setPlayerId(user.uid);
 
         const player = ref(database, `players/${user.uid}`);
-        setPlayerRef(player)
+        setPlayerRef(player);
 
         get(player).then((snapshot) => {
           const playerData = snapshot.val() || {};
@@ -97,7 +97,7 @@ function App() {
             pokeballs: playerData.pokeballs || 0,
             loggedIn: true,
             DigitalCrafts: playerData.DigitalCrafts || false,
-            skins: playerData.skins || {1:true}
+            skins: playerData.skins || { 1: true },
           });
           setSkins(playerData.skins);
           setName(playerData.name || name);
@@ -116,7 +116,7 @@ function App() {
   }, []);
 
   //name change system
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
 
   const handleChange = (e) => {
     update(playerRef, {
@@ -201,7 +201,7 @@ function App() {
   //chat system
   const [chat, setChat] = useState(null);
   const [text, setText] = useState("");
-  const [time, setTime] = useState(new Date())
+  const [time, setTime] = useState(new Date());
 
   const handleText = (e) => {
     setText(e.target.value);
@@ -225,10 +225,10 @@ function App() {
       set(chatRef, {
         name: name.toUpperCase(),
         message: text,
-        player: playerId
+        player: playerId,
       });
       update(playerRef, {
-        message: text
+        message: text,
       });
     }
     setText("");
@@ -238,14 +238,14 @@ function App() {
   const [skins, setSkins] = useState({});
   const [show, setShow] = useState(false);
   const [showStore, setShowStore] = useState(false);
-  const [pokemon, setPokemon] = useState('');
+  const [pokemon, setPokemon] = useState("");
   const [pokemonOwned, setPokemonOwned] = useState(false);
   const [disable, setDisable] = useState(false);
 
   const handleClose = () => {
     setShow(false);
     setShowStore(false);
-  }
+  };
 
   const handleYes = () => {
     setShow(false);
@@ -266,7 +266,7 @@ function App() {
       });
     }
   };
-  
+
   //render skins
   function Skins(props) {
     const { pokemon, owned } = props;
@@ -281,46 +281,42 @@ function App() {
         <img
           className={"skin " + owned}
           onClick={handleShow}
-          src={`/pokemon/${pokemon}.png`} 
+          src={`/pokemon/${pokemon}.png`}
           alt={pokemon}
         ></img>
       </>
     );
   }
-  
 
-  const [store, setStore] = useState([])
+  const [store, setStore] = useState([]);
   function GenerateStore() {
-    let set = new Set()
-    let RNG = 0
+    let set = new Set();
+    let RNG = 0;
 
     while (set.size < 5) {
-      RNG = Math.trunc(Math.random() * (100 - 1) + 1)
-      if(RNG > 1 && RNG <= 10) {
-        set.add(RarePokemon())
-        }
-        else if(RNG > 10 && RNG <= 55) {
-            set.add(UncommonPokemon())
-        }
-        else if(RNG > 55 && RNG <= 100) {
-            set.add(CommonPokemon())
-        }
-        else {
-          set.add(LegendaryPokemon())
-        }
+      RNG = Math.trunc(Math.random() * (100 - 1) + 1);
+      if (RNG > 1 && RNG <= 10) {
+        set.add(RarePokemon());
+      } else if (RNG > 10 && RNG <= 55) {
+        set.add(UncommonPokemon());
+      } else if (RNG > 55 && RNG <= 100) {
+        set.add(CommonPokemon());
+      } else {
+        set.add(LegendaryPokemon());
       }
-      return set
     }
-    const handleRefresh = () => {
-      const newStore = GenerateStore()
-      setStore(newStore)
-    }
+    return set;
+  }
+  const handleRefresh = () => {
+    const newStore = GenerateStore();
+    setStore(newStore);
+  };
   useEffect(() => {
-      const newStore = GenerateStore()
-      setStore(newStore)
+    const newStore = GenerateStore();
+    setStore(newStore);
   }, []);
 
-  const [price, setPrice] = useState('')
+  const [price, setPrice] = useState("");
 
   function Store(props) {
     const { pokemon } = props;
@@ -329,38 +325,37 @@ function App() {
       setShowStore(true);
       setPokemon(pokemon);
       setPokemonOwned(players[playerId].skins[pokemon]);
-      let currentPrice = 25000
+      let currentPrice = 25000;
 
       if (common.includes(pokemon)) {
-        currentPrice = 100
+        currentPrice = 100;
+      } else if (uncommon.includes(pokemon)) {
+        currentPrice = 500;
+      } else if (rare.includes(pokemon)) {
+        currentPrice = 1000;
       }
-      else if ((uncommon.includes(pokemon))) {
-        currentPrice = 500      
-      }
-      else if ((rare.includes(pokemon))) {
-        currentPrice = 1000
-      }
-      setPrice(currentPrice)
-
+      setPrice(currentPrice);
       if (
         !Object.keys(players[playerId].skins).includes(pokemon) &&
         players[playerId]?.pokeballs < currentPrice
-      ) {
-        setDisable(true);
-      }
-      else {
-        setDisable(false)
-      }
-
-    }
+        ) {
+          setDisable(true);
+        } else {
+          setDisable(false);
+        }
+    };
     return (
       <>
         <img
-          className="skin"
-          src={`/pokemon/${pokemon}.png`} 
-          onClick={handleStore} 
-          alt={pokemon} >
-        </img>
+          className={
+            Object.keys(players?.[playerId]?.skins ?? {}).includes(pokemon)
+              ? "skin"
+              : "skin false"
+          }
+          src={`/pokemon/${pokemon}.png`}
+          onClick={handleStore}
+          alt={pokemon}
+        ></img>
       </>
     );
   }
@@ -368,16 +363,16 @@ function App() {
     setSkins(players?.[playerId]?.skins);
   }, [playerId, players, show, showStore]);
 
-  const chats = Object.keys(chat?? {})
-  const latestChatKey = chats?.[chats.length -1]
-  const latestChat = chat?.[latestChatKey]
+  const chats = Object.keys(chat ?? {});
+  const latestChatKey = chats?.[chats.length - 1];
+  const latestChat = chat?.[latestChatKey];
 
   return (
     <div className="App">
+      <p className="title">Collect 'em All</p>
       <div className="ui">
         <div className="left">
           <div className="player-name">
-            <label htmlFor="player-name">Name</label>
             <br></br>
             <input
               id="player-name"
@@ -407,92 +402,99 @@ function App() {
                 maxLength={30}
                 onChange={handleText}
                 autoComplete="off"
-                
               />
             </form>
           </div>
         </div>
-        <div className="skin-ui">
-          <h4>
-            PC Box
-          </h4>
-          <div className="skins">
-          {skins &&
-            Object.entries(skins ?? {}).map(([key, skin]) => {
-              return (
-                <div key={key}>
-                  <Skins pokemon={key} owned={skin} />
-                </div>
-              );
-            })}
-          <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Switch Pokemon?</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>Would you like to switch to this Pokemon?</Modal.Body>
-            <Modal.Footer>
-              {pokemonOwned ? (
-                <>
-                  <Button variant="success" onClick={handleYes}>
-                    Yes
-                  </Button>
-                  <Button variant="danger" onClick={handleClose}>
-                    No
-                  </Button>
-                </>
-              ) : (
-                <Button variant="danger" onClick={handleClose}>
-                  You do not own this Pokemon!
-                </Button>
-              )}
-            </Modal.Footer>
-          </Modal>
+        <div className="right">
+          <div className="skin-ui">
+            <h4>PC Box</h4>
+            <div className="skins">
+              {skins &&
+                Object.entries(skins ?? {}).map(([key, skin]) => {
+                  return (
+                    <div key={key}>
+                      <Skins pokemon={key} owned={skin} />
+                    </div>
+                  );
+                })}
+              <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Switch Pokemon?</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  Would you like to switch to this Pokemon?
+                </Modal.Body>
+                <Modal.Footer>
+                  {pokemonOwned ? (
+                    <>
+                      <Button variant="success" onClick={handleYes}>
+                        Yes
+                      </Button>
+                      <Button variant="danger" onClick={handleClose}>
+                        No
+                      </Button>
+                    </>
+                  ) : (
+                    <Button variant="danger" onClick={handleClose}>
+                      You do not own this Pokemon!
+                    </Button>
+                  )}
+                </Modal.Footer>
+              </Modal>
+            </div>
           </div>
-        </div>
-        <div className="store-ui">
-          <h4>
-            PokeMart
-          </h4>
-          <div className="store">
-            <div className="items">
-          {
-            [...store]?.map(item => {
-              return (
-                <div>
-                  <Store pokemon={item} />
-                </div>
-              );
-            })}
-            </div>
-            <div>
-              <Button className="btn-sm" variant="secondary" onClick={handleRefresh}>
-                refresh
-              </Button>
-            </div>
-          <Modal show={showStore} onHide={handleClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Buy Pokemon?</Modal.Title>
-            </Modal.Header>
-            <Modal.Body><Store pokemon={pokemon} /> Would you like to buy this Pokemon for {price} pokeballs?</Modal.Body>
-            <Modal.Footer>
-              {pokemonOwned ? (
-<Button variant="danger" onClick={handleClose}>
-              You already own this Pokemon!
-            </Button>
-              ) : disable ? (
-                <Button variant="danger" onClick={handleClose}>
-                  You do not have enough pokeballs!
+          <div className="store-ui">
+            <h4>PokeMart</h4>
+            <div className="store">
+              <div className="items">
+                {[...store]?.map((item) => {
+                  return (
+                    <div>
+                      <Store pokemon={item} />
+                    </div>
+                  );
+                })}
+              </div>
+              <div>
+                <Button
+                  className="btn-sm"
+                  variant="secondary"
+                  onClick={handleRefresh}
+                >
+                  refresh
                 </Button>
-              ) : <>
-                  <Button variant="success" onClick={handleYes}>
-                    Yes
-                  </Button>
-                  <Button variant="danger" onClick={handleClose}>
-                    No
-                  </Button>
-                </> }
-            </Modal.Footer>
-          </Modal>
+              </div>
+              <Modal show={showStore} onHide={handleClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Buy Pokemon?</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <Skins pokemon={pokemon} /> Would you like to buy this Pokemon
+                  for {price} pokeballs?
+                </Modal.Body>
+                <Modal.Footer>
+                  {pokemonOwned ? (
+                    <Button variant="danger" onClick={handleClose}>
+                      You already own this Pokemon!
+                    </Button>
+                  ) : disable ? (
+                    <Button variant="danger" onClick={handleClose}>
+                      You do not have enough pokeballs!
+                    </Button>
+                  ) : (
+                    <>
+                      <Button variant="success" onClick={handleYes}>
+                        Yes
+                      </Button>
+                      <Button variant="danger" onClick={handleClose}>
+                        No
+                      </Button>
+                    </>
+                  )}
+                </Modal.Footer>
+              </Modal>
+            </div>
           </div>
         </div>
       </div>
