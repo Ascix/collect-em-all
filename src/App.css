@@ -209,6 +209,13 @@ img {
 @media only screen and (min-height: 800px) {
   .ui {
     position: fixed;
-    top: 65%;
+    top: 60%;
+  }
+  .game-container{
+    top: 27%;
+  }
+  .right {
+    top: 17%;
+    left: 56%;
   }
 }
