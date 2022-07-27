@@ -1,6 +1,6 @@
 # Pokemon TCG Collector
 
-Pokemon TCG Collector is a React based website designed to search through a database of Pokemon cards, look up card details, and add them to your collection.
+Collect 'em All is a React based browser game where you can socialize with people and collect currency (pokeballs) to purchase new skins (Pokemon).
 
 My website is hosted at this url!
 https://pokemontcgcollector.netlify.app
