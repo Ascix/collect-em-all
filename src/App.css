@@ -12,6 +12,7 @@
 .title {
     position:absolute;
     top: 2%;
+    height: 90px;
     display: flex;
     justify-content: center;
 }
@@ -154,9 +155,10 @@ img {
   cursor: pointer;
 }
 
-@media only screen and (max-width: 80px) and (min-height: 800px) {
+@media only screen and (max-width: 800px) and (min-height: 600px) {
   .title {
-    top: 1%
+    top: 1%;
+    height: 60px;
   }
   .game-container{
     left: 15%
@@ -198,23 +200,15 @@ img {
     top: 90%;
     left: 77%
   }
-  .player-name input {
+  .ui {
     position: fixed;
-    top: 75%;
-    left: 5%;
-  }
-  .chat {
-    position: fixed;
-    width: 400px;
-    height: 100px;
-    top: 75%;
-    left: 5%;
+    top: 60%;
   }
 }
 
 @media only screen and (min-height: 800px) {
   .ui {
     position: fixed;
-    top: 60%;
+    top: 65%;
   }
 }
