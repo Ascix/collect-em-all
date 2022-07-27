@@ -1,4 +1,4 @@
-.App {
+.App:not(.character-name-container) {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -66,8 +66,9 @@
   border: 1px solid black;
   border-radius: 8px;
   background-color: white;
-  height: 180px;
-  width: 200px;
+  height: 200px;
+  width: 300px;
+  overflow-y: auto;
   margin-left: 20px;
 }
 
@@ -76,9 +77,7 @@ h4 {
 }
 
 .skins {
-  margin-top: 13%;
   padding-left: 9px;
-  max-width: 140px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,13 +86,9 @@ h4 {
 }
 
 .skin {
-  overflow: hidden;
-  background: url(/public/characters.png);
-  background-size: auto 192px;
-  width: 32px;
-  height: 32px;
+  width: 64px;
+  height: 64px;
   image-rendering: pixelated;
-  margin-right: 10px;
 }
 
 .store-ui {
@@ -103,40 +98,19 @@ h4 {
   border: 1px solid black;
   border-radius: 8px;
   background-color: white;
-  height: 180px;
-  width: 200px;
+  height: 200px;
+  width: 300px;
+  overflow-y: auto;
   margin-left: 20px;
 }
 
 .store {
-  margin-top: 13%;
   padding-left: 9px;
-  max-width: 140px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: row;
   flex-wrap: wrap;
-}
-
-.skin:hover {
-  background-position-x: -32px;
-}
-
-.skin[color="red"]{
-background-position-y: -32px;
-}
-.skin[color="orange"] {
-background-position-y: -64px;
-}
-.skin[color="yellow"] {
-background-position-y: -96px;
-}
-.skin[color="green"]{
-background-position-y: -128px;
-}
-.skin[color="purple"]{
-background-position-y: -160px;
 }
 
 .false {

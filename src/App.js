@@ -5,7 +5,6 @@ import {
   ref,
   set,
   onDisconnect,
-  onChildAdded,
   equalTo,
   onValue,
   get,
@@ -22,11 +21,13 @@ import Button from "react-bootstrap/Button";
 import BlockedSpaces from "./components/BlockedSpaces";
 import ChatboxScroll from "./components/ChatboxScroll";
 import ChatMessage from "./components/ChatMessage";
-import CoinSpawn from "./components/CoinSpawn";
+import PokeballSpawn from "./components/PokeballSpawn";
 import CreateName from "./components/CreateName";
 import GetCoordinates from "./components/GetCoordinates";
-import RenderCoin from "./components/RenderCoin";
+import RenderPokeball from "./components/RenderPokeball";
 import RenderPlayer from "./components/RenderPlayer";
+import RandomFromArray from "./components/RandomFromArray";
+
 
 function App() {
   const firebaseConfig = {
@@ -54,19 +55,19 @@ function App() {
       orderByChild("loggedIn"),
       equalTo(true)
     );
-    const allCoinsRef = ref(database, `coins`);
+    const allPokeballsRef = ref(database, `pokeballs`);
     const allChatRef = query(ref(database, `chat`), limitToLast(10));
 
     onValue(allPlayersRef, (snapshot) => {
       setPlayers(snapshot.val());
     });
-    onValue(allCoinsRef, (snapshot) => {
-      setCoins(snapshot.val());
+    onValue(allPokeballsRef, (snapshot) => {
+      setPokeballs(snapshot.val());
     });
     onValue(allChatRef, (snapshot) => {
       setChat(snapshot.val());
     });
-    CoinSpawn();
+    PokeballSpawn();
   }
 
   useEffect(() => {
@@ -77,31 +78,24 @@ function App() {
         setPlayerId(user.uid);
 
         const player = ref(database, `players/${user.uid}`);
-        setPlayerRef(player);
+        setPlayerRef(player)
 
         get(player).then((snapshot) => {
           const playerData = snapshot.val() || {};
-          const playerSkins = {
-            blue: playerData.skins?.blue || true,
-            red: playerData.skins?.red || false,
-            orange: playerData.skins?.orange || false,
-            yellow: playerData.skins?.yellow || false,
-            green: playerData.skins?.green || false,
-            purple: playerData.skins?.purple || false,
-          }
+
           set(player, {
             id: user.uid,
             name: playerData.name || CreateName(),
             direction: playerData.direction || "right",
-            color: playerData.color || "blue",
+            pokemon: playerData.pokemon || "1",
             x: playerData.x || 3,
             y: playerData.y || 5,
-            coins: playerData.coins || 0,
+            pokeballs: playerData.pokeballs || 0,
             loggedIn: true,
             DigitalCrafts: playerData.DigitalCrafts || false,
-            skins: playerSkins
+            skins: playerData.skins || {1:true}
           });
-          setSkins(playerSkins);
+          setSkins(playerData.skins);
           setName(playerData.name || name);
         });
 
@@ -171,7 +165,7 @@ function App() {
         }
       }
       set(playerRef, players[playerId]);
-      GrabCoin(players[playerId].x, players[playerId].y);
+      GrabPokeball(players[playerId].x, players[playerId].y);
     };
     document.addEventListener("keydown", handleKeyPress);
     return () => {
@@ -181,20 +175,20 @@ function App() {
 
   const refer = useRef(null);
 
-  //coin system
-  const [coins, setCoins] = useState({});
+  //pokeball system
+  const [pokeballs, setPokeballs] = useState({});
 
-  function GrabCoin(x, y) {
+  function GrabPokeball(x, y) {
     const key = GetCoordinates(x, y);
-    if (coins[key]) {
-      remove(ref(database, `coins/${key}`));
+    if (pokeballs[key]) {
+      remove(ref(database, `pokeballs/${key}`));
       update(playerRef, {
-        coins: players[playerId].coins + 1,
+        pokeballs: players[playerId].pokeballs + 1,
       });
-      get(ref(database, `coins`)).then((snapshot) => {
-        const coins = snapshot.val();
-        if (Object.keys(coins).length < 10) {
-          CoinSpawn();
+      get(ref(database, `pokeballs`)).then((snapshot) => {
+        const pokeballs = snapshot.val();
+        if (Object.keys(pokeballs).length < 10) {
+          PokeballSpawn();
         }
       });
     }
@@ -217,7 +211,7 @@ function App() {
     if (text === "$DigitalCrafts") {
       if (players[playerId].DigitalCrafts === false) {
         update(playerRef, {
-          coins: players[playerId].coins + 1000,
+          pokeballs: players[playerId].pokeballs + 1000,
           DigitalCrafts: true,
         });
       }
@@ -239,10 +233,9 @@ function App() {
   const [skins, setSkins] = useState({});
   const [show, setShow] = useState(false);
   const [showStore, setShowStore] = useState(false);
-  const [color, setColor] = useState('');
-  const [colorOwned, setColorOwned] = useState(false);
+  const [pokemon, setPokemon] = useState('');
+  const [pokemonOwned, setPokemonOwned] = useState(false);
   const [disable, setDisable] = useState(false);
-
 
   const handleClose = () => {
     setShow(false);
@@ -252,79 +245,277 @@ function App() {
   const handleYes = () => {
     setShow(false);
     setShowStore(false);
-    if (players[playerId].skins[color] !== true) {
+    if (!Object.keys(players[playerId].skins).includes(pokemon)) {
       update(playerRef, {
-        color: color,
+        pokemon: pokemon,
         skins: {
           ...players[playerId].skins,
-          [color]: true,
+          [pokemon]: true,
         },
-        coins: players[playerId].coins - 100,
+        pokeballs: players[playerId].pokeballs - price,
       });
       setSkins(players[playerId].skins);
     } else {
       update(playerRef, {
-        color: color,
+        pokemon: pokemon,
       });
     }
   };
   
   //render skins
   function Skins(props) {
-    const { color, owned } = props;
+    const { pokemon, owned } = props;
     const handleShow = () => {
       setShow(true);
-      setColor(color);
-      setColorOwned(players[playerId].skins[color]);
+      setPokemon(pokemon);
+      setPokemonOwned(players[playerId].skins[pokemon]);
     };
 
     return (
       <>
-        <button
+        <img
           className={"skin " + owned}
           onClick={handleShow}
-          color={color}
-        ></button>
+          src={`/pokemon/${pokemon}.png`} 
+          alt={pokemon}
+        ></img>
       </>
     );
   }
+  
+  const common = [
+    "1",
+    "4",
+    "7",
+    "10",
+    "13",
+    "16",
+    "19",
+    "21",
+    "23",
+    "25",
+    "27",
+    "29",
+    "32",
+    "35",
+    "37",
+    "39",
+    "41",
+    "43",
+    "46",
+    "48",
+    "50",
+    "52",
+    "54",
+    "56",
+    "58",
+    "60",
+    "63",
+    "66",
+    "69",
+    "72",
+    "74",
+    "77",
+    "79",
+    "81",
+    "84",
+    "86",
+    "88",
+    "90",
+    "92",
+    "96",
+    "98",
+    "100",
+    "102",
+    "104",
+    "109",
+    "111",
+    "116",
+    "118",
+    "120",
+    "129",
+    "147"
+]
+const uncommon = [
+  "2",
+  "5",
+  "8",
+  "14",
+  "17",
+  "20",
+  "22",
+  "24",
+  "26",
+  "28",
+  "30",
+  "33",
+  "36",
+  "38",
+  "40",
+  "42",
+  "44",
+  "47",
+  "49",
+  "51",
+  "53",
+  "55",
+  "57",
+  "59",
+  "61",
+  "64",
+  "67",
+  "70",
+  "73",
+  "75",
+  "78",
+  "80",
+  "82",
+  "85",
+  "87",
+  "89",
+  "91",
+  "93",
+  "95",
+  "97",
+  "99",
+  "101",
+  "103",
+  "105",
+  "108",
+  "110",
+  "112",
+  "117",
+  "119",
+  "121",
+  "130",
+  "133",
+  "138",
+  "140",
+  "148"
+]
+const rare = [
+  "3",
+  "6",
+  "9",
+  "12",
+  "15",
+  "18",
+  "31",
+  "34",
+  "45",
+  "62",
+  "65",
+  "68",
+  "71",
+  "83",
+  "94",
+  "106",
+  "107",
+  "113",
+  "114",
+  "115",
+  "122",
+  "123",
+  "124",
+  "125",
+  "126",
+  "127",
+  "128",
+  "131",
+  "132",
+  "134",
+  "135",
+  "136",
+  "137",
+  "139",
+  "141",
+  "142",
+  "143",
+  "149",
+]
+const legendary = [
+  "144",
+  "145",
+  "146",
+  "150",
+  "151",
+]
+  const [store, setStore] = useState([])
+  useEffect(() => {
+    function GenerateStore() {
+      let set = new Set()
+      let RNG = Math.random() * (100 - 1) + 1
+      while (set.size < 5) {
+          if(RNG > 1 && RNG <= 10) {
+              set.add(RandomFromArray(rare))
+          }
+          else if(RNG > 10 && RNG <= 55) {
+              set.add(RandomFromArray(uncommon))
+          }
+          else if(RNG > 55 && RNG <= 100) {
+              set.add(RandomFromArray(common))
+          }
+          else {
+              set.add(RandomFromArray(legendary))
+          }
+      }
+      return set
+    }
+    const newStore = GenerateStore()
+    setStore(newStore)
+  }, []);
+
+  const [price, setPrice] = useState('')
 
   function Store(props) {
-    const { color, owned } = props;
+    const { pokemon } = props;
 
     const handleStore = () => {
       setShowStore(true);
-      setColor(color);
-      setColorOwned(players[playerId].skins[color]);
-      console.log(players[playerId].skins[color])
-      console.log(players[playerId].coins)
+      setPokemon(pokemon);
+      setPokemonOwned(players[playerId].skins[pokemon]);
+      if (common.includes(pokemon)) {
+        setPrice(100)
+      }
+      else if ((uncommon.includes(pokemon))) {
+        setPrice(500)
+      }
+      else if ((rare.includes(pokemon))) {
+        setPrice(1000)
+      }
+      else if ((legendary.includes(pokemon))) {
+        setPrice(25000)
+      }
       if (
-        players[playerId].skins[color] !== "true" &&
-        players[playerId].coins < 100
+        !Object.keys(players[playerId].skins).includes(pokemon) &&
+        players[playerId].pokeballs < price
       ) {
         setDisable(true);
       }
       else {
         setDisable(false)
       }
+
     }
     return (
       <>
-        <button
-          className={"skin " + owned}
-          onClick={handleStore}
-          color={color}
-        ></button>
+        <img
+          className="skin"
+          src={`/pokemon/${pokemon}.png`} 
+          onClick={handleStore} 
+          alt={pokemon} >
+        </img>
       </>
     );
   }
   useEffect(() => {
-    setSkins(players[playerId]?.skins);
+    setSkins(players?.[playerId]?.skins);
   }, [playerId, players, show, showStore]);
 
   const chats = Object.keys(chat?? {})
   const latestChatKey = chats?.[chats.length -1]
   const latestChat = chat?.[latestChatKey]
+
   return (
     <div className="App">
       <div className="ui">
@@ -360,30 +551,31 @@ function App() {
                 maxLength={30}
                 onChange={handleText}
                 autoComplete="off"
+                
               />
             </form>
           </div>
         </div>
         <div className="skin-ui">
           <h4>
-            Skins
+            PC Box
           </h4>
           <div className="skins">
           {skins &&
             Object.entries(skins ?? {}).map(([key, skin]) => {
               return (
                 <div key={key}>
-                  <Skins color={key} owned={skin} />
+                  <Skins pokemon={key} owned={skin} />
                 </div>
               );
             })}
           <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-              <Modal.Title>Change Skin?</Modal.Title>
+              <Modal.Title>Switch Pokemon?</Modal.Title>
             </Modal.Header>
-            <Modal.Body>Would you like to change to this skin?</Modal.Body>
+            <Modal.Body>Would you like to switch to this Pokemon?</Modal.Body>
             <Modal.Footer>
-              {colorOwned ? (
+              {pokemonOwned ? (
                 <>
                   <Button variant="success" onClick={handleYes}>
                     Yes
@@ -394,7 +586,7 @@ function App() {
                 </>
               ) : (
                 <Button variant="danger" onClick={handleClose}>
-                  You do not own this skin!
+                  You do not own this Pokemon!
                 </Button>
               )}
             </Modal.Footer>
@@ -403,30 +595,30 @@ function App() {
         </div>
         <div className="store-ui">
           <h4>
-            Store
+            PokeMart
           </h4>
           <div className="store">
-          {skins &&
-            Object.entries(skins ?? {}).map(([key, skin]) => {
+          {
+            [...store]?.map(item => {
               return (
-                <div key={key}>
-                  <Store color={key} owned={skin} />
+                <div>
+                  <Store pokemon={item} />
                 </div>
               );
             })}
           <Modal show={showStore} onHide={handleClose}>
             <Modal.Header closeButton>
-              <Modal.Title>Buy Skin?</Modal.Title>
+              <Modal.Title>Buy Pokemon?</Modal.Title>
             </Modal.Header>
-            <Modal.Body>Would you like to buy this skin for 100 coins?</Modal.Body>
+            <Modal.Body><Store pokemon={pokemon} /> Would you like to buy this Pokemon for {price} pokeballs?</Modal.Body>
             <Modal.Footer>
-              {colorOwned ? (
+              {pokemonOwned ? (
 <Button variant="danger" onClick={handleClose}>
-              You already own this skin!
+              You already own this Pokemon!
             </Button>
               ) : disable ? (
                 <Button variant="danger" onClick={handleClose}>
-                  You do not have enough coins!
+                  You do not have enough pokeballs!
                 </Button>
               ) : <>
                   <Button variant="success" onClick={handleYes}>
@@ -448,23 +640,23 @@ function App() {
               <RenderPlayer
                 key={player.id}
                 name={player.name}
-                coins={player.coins}
-                color={player.color}
+                pokeballs={player.pokeballs}
+                pokemon={player.pokemon}
                 direction={player.direction}
                 left={16 * player.x + "px"}
-                top={16 * player.y - 4 + "px"}
+                top={16 * player.y - 14 + "px"}
                 character={playerId === key ? "character you" : "character"}
                 latestChat={latestChat}
                 playerId={player.id}
               />
             );
           })}
-        {Object.entries(coins ?? {}).map(([key, coin]) => {
+        {Object.entries(pokeballs ?? {}).map(([key, pokeball]) => {
           return (
-            <RenderCoin
-              key={coin.x + "x" + coin.y}
-              left={16 * coin.x + "px"}
-              top={16 * coin.y - 4 + "px"}
+            <RenderPokeball
+              key={pokeball.x + "x" + pokeball.y}
+              left={16 * pokeball.x + "px"}
+              top={16 * pokeball.y - 4 + "px"}
             />
           );
         })}

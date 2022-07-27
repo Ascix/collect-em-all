@@ -1,0 +1,32 @@
+.grid-cell {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+}
+
+.pokeball {
+    position: absolute;
+    width: 16 px;
+}
+
+.pokeball-shadow {
+    position: absolute;
+    background: url(/public/pokeball-shadow.png) no-repeat no-repeat;
+    left: 1px;
+    top: 5px;
+}
+
+.pokeball-sprite {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    background: url(/public/pokeball.png) no-repeat no-repeat;
+    background-size: 8px 8px;
+    height: 8px;
+    width: 8px;
+    animation: pokeballFloat 1s linear infinite alternate-reverse;
+}
+@keyframes pokeballFloat {
+    from { transform: translateY(0) }
+    to { transform: translateY(4px) }
+}

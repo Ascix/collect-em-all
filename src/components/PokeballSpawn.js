@@ -16,12 +16,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-function CoinSpawn() {
+function PokeballSpawn() {
     const spawnDelay = [ 5000, 7000, 10000 ];
     setTimeout(() => {
       const { x, y } = SafeSpot()
-      const coinRef = ref(database, `coins/${GetCoordinates(x, y)}`)
-      set(coinRef, {
+      const pokeballRef = ref(database, `pokeballs/${GetCoordinates(x, y)}`)
+      set(pokeballRef, {
         x,
         y,
       })
@@ -29,4 +29,4 @@ function CoinSpawn() {
     }, RandomFromArray(spawnDelay))
 }
 
-export default CoinSpawn
+export default PokeballSpawn
