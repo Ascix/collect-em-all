@@ -203,7 +203,7 @@ function App() {
   //chat system
   const [chat, setChat] = useState(null);
   const [text, setText] = useState("");
-  const [time] = useState(new Date());
+  let time = new Date().getTime()
 
   const handleText = (e) => {
     setText(e.target.value);
