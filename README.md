@@ -55,28 +55,17 @@ We also installed the following packages below to develop the app
 
 ### General Information
 
-On the front page you will see the 3 newest released set of Pokemon cards.
-![Collect 'em All Front Page](/public/frontpage.png)
+After collecting enough pokeballs, you can spend them at the PokeMart. There are 4 rarities of Pokemon, with each tier having a different cost.
+![Collect 'em All Buying Pokemon](/public/buy.png)
 
+If you do not have enough pokeballs, you will have not the option to purchase the Pokemon.
+![Collect 'em All Not Enough Money](/public/no-money.png)
 
-If you click on the Search link in the Nav, it will direct you to the search page where you can look up a card and it will generate all the cards with that name.
-![Collect 'em All Search Page](/public/search.png)
+After you collected at least one Pokemon, you will be able to switch your Pokemon.
+![Collect 'em All Switching Pokemon](/public/switch.png)
 
-
-You can click one of the cards and it will bring up the card details.
-![Collect 'em All Card Details](/public/card-details.png)
-
-
-You can also click the Sets link in the Nav to look at all the released sets.
-![Collect 'em All All Sets](/public/all-sets.png)
-
-
-From there, you can click one of the sets and it will render all the cards in that particular set.
-![Collect 'em All Set](/public/set.png)
-
-
-In the Collection link in the Nav, can check out the cards you added to your collection.
-![Collect 'em All Collection Page](/public/collection.png)
+The chat box at the bottom will allow you to socialize with other players.
+![Collect 'em All Chatting](/public/chat.png)
 
 ---
 
