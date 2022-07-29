@@ -156,7 +156,7 @@ img {
   cursor: pointer;
 }
 
-@media only screen and (max-width: 800px) and (min-height: 600px) {
+/* @media only screen and (max-width: 800px) and (min-height: 600px) {
   .title {
     top: 1%;
     height: 60px;
@@ -184,7 +184,7 @@ img {
     top: 75%;
     left: 5%;
   }
-}
+} */
 
 @media only screen and (min-width: 801px) and (max-width: 1024px) {
   .title {
@@ -206,7 +206,7 @@ img {
     top: 60%;
   }
 }
-
+/* 
 @media only screen and (min-height: 800px) {
   .ui {
     position: fixed;
@@ -222,4 +222,120 @@ img {
   .title {
     top: 4%
   }
+} */
+
+
+@media only screen and (max-width: 421px) and (max-height: 920px) {
+  .title {
+    top: 2%;
+    height: 60px;
+  }
+  .game-container{
+    transform: scale(1.7);
+    top: 40%;
+    left: 20%
+  }
+  .ui, .skin, .skins, .left {
+    top: 0%;
+    left: 0%;
+    margin: 0;
+    padding: 0
+  }
+  .right {
+    position:absolute
+  }
+  .skin-ui {
+    position:fixed;
+    left: 8%;
+    top: 10%;
+    height: 170px;
+    width: 150px;
+    margin: 0;
+    padding: 0;
+  }
+  .store-ui {
+    position:fixed;
+    left: 52%;
+    top: 10%;
+    height: 170px;
+    width: 150px;
+    margin: 0;
+    padding: 0;
+  }
+  .store button {
+    position:fixed;
+    top: 30%;
+    left: 63%;
+  }
+  .player-name input {
+    position: fixed;
+    top: 71%;
+    left: 7%;
+  }
+  .chat {
+    position: fixed;
+    width: 340px;
+    height: 200px;
+    top: 73%;
+    left: 7%;
+  }
+  .messages {
+    height: 200px
+  }
 }
+
+  @media only screen and (max-width: 420px) and (max-height: 700px) {
+    .title {
+      top: 2%;
+      height: 60px;
+    }
+    .game-container{
+      transform: scale(1.5);
+      top: 38%;
+      left: 18%
+    }
+    .ui, .skin, .skins, .left {
+      top: 0%;
+      left: 0%;
+      margin: 0;
+      padding: 0
+    }
+    .right {
+      position:absolute
+    }
+    .skin-ui {
+      position:fixed;
+      left: 8%;
+      top: 13%;
+      height: 100px;
+      width: 150px;
+      margin: 0;
+      padding: 0;
+    }
+    .store-ui {
+      position:fixed;
+      left: 52%;
+      top: 13%;
+      height: 100px;
+      width: 150px;
+      margin: 0;
+      padding: 0;
+    }
+    .store button {
+      position:fixed;
+      top: 29%;
+      left: 63%;
+    }
+    .player-name input {
+      position: fixed;
+      top: 77%;
+      left: 4%;
+    }
+    .chat {
+      position: fixed;
+      width: 340px;
+      height: 100px;
+      top: 80%;
+      left: 4%;
+    }
+  }

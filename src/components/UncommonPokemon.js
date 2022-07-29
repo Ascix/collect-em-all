@@ -3,7 +3,8 @@ import RandomFromArray from "./RandomFromArray";
 export const uncommon = [
     "2",
     "5",
-    "8",
+    "8", 
+    "11",
     "14",
     "17",
     "20",

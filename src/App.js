@@ -30,6 +30,7 @@ import RarePokemon, { rare } from "./components/RarePokemon";
 import UncommonPokemon, { uncommon } from "./components/UncommonPokemon";
 import CommonPokemon, { common } from "./components/CommonPokemon";
 import LegendaryPokemon from "./components/LegendaryPokemon";
+import Hammer from "hammerjs/hammer";
 
 function App() {
   const firebaseConfig = {
@@ -369,6 +370,12 @@ function App() {
   const latestChatKey = chats?.[chats.length - 1];
   const latestChat = chat?.[latestChatKey];
 
+  const handleSwipeUp = () => {
+    if (!BlockedSpaces(players[playerId].x, players[playerId].y - 1)) {
+      players[playerId].y -= 1;
+    }
+  }
+
   return (
     <div className="App">
       <img src="title.png" className="title" alt="game logo"></img>
@@ -501,7 +508,7 @@ function App() {
           </div>
         </div>
       </div>
-      <div className="game-container" ref={refer}>
+<div className="game-container" ref={refer}>
         {playerRef &&
           Object.entries(players ?? {}).map(([key, player]) => {
             return (
@@ -528,7 +535,7 @@ function App() {
             />
           );
         })}
-      </div>
+        </div>
     </div>
   );
 }
