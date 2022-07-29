@@ -11,6 +11,7 @@ body {
   align-items: center;
   justify-content: center;
   background: rgb(105, 165, 243);
+  overflow: hidden
 }
 
 code {

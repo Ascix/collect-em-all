@@ -4,10 +4,9 @@
     justify-content: center;
     margin: 0;
     padding: 0;
-    height: 100%;
+    height: 100vh;
     font-size: 14px;
     font-family: 'Kanit', sans-serif;
-    overflow: hidden
 }
 
 .title {
