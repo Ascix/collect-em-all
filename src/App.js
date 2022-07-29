@@ -30,6 +30,7 @@ import RarePokemon, { rare } from "./components/RarePokemon";
 import UncommonPokemon, { uncommon } from "./components/UncommonPokemon";
 import CommonPokemon, { common } from "./components/CommonPokemon";
 import LegendaryPokemon from "./components/LegendaryPokemon";
+import { useSwipeable } from "react-swipeable";
 
 function App() {
   const firebaseConfig = {
@@ -45,6 +46,21 @@ function App() {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const database = getDatabase(app);
+
+  const handlers = useSwipeable({
+    onSwipedLeft: () => {
+      document.dispatchEvent(new KeyboardEvent("keydown", {key: "ArrowLeft"}))
+    },
+    onSwipedUp: () => {
+      document.dispatchEvent(new KeyboardEvent("keydown", {key: "ArrowUp"}))
+    },
+    onSwipedRight: () => {
+      document.dispatchEvent(new KeyboardEvent("keydown", {key: "ArrowRight"}))
+    },
+    onSwipedDown: () => {
+      document.dispatchEvent(new KeyboardEvent("keydown", {key: "ArrowDown"}))
+    }
+  })
 
   //player system
   const [players, setPlayers] = useState({});
@@ -501,6 +517,7 @@ function App() {
           </div>
         </div>
       </div>
+<div {...handlers} >
 <div className="game-container" ref={refer}>
         {playerRef &&
           Object.entries(players ?? {}).map(([key, player]) => {
@@ -528,6 +545,7 @@ function App() {
             />
           );
         })}
+        </div>
         </div>
     </div>
   );
