@@ -7,6 +7,7 @@
     height: 100vh;
     font-size: 14px;
     font-family: 'Kanit', sans-serif;
+    overflow: hidden
 }
 
 .title {
@@ -141,7 +142,8 @@ h4 {
 .store button {
   position:absolute;
   top: 90%;
-  left: 77%
+  left: 77%;
+  z-index: 1;
 }
 
 .skin:hover {
@@ -232,7 +234,7 @@ img {
   }
   .game-container{
     transform: scale(1.7);
-    top: 40%;
+    top: 36%;
     left: 20%
   }
   .ui, .skin, .skins, .left {
@@ -248,7 +250,7 @@ img {
     position:fixed;
     left: 8%;
     top: 10%;
-    height: 170px;
+    height: 120px;
     width: 150px;
     margin: 0;
     padding: 0;
@@ -257,14 +259,14 @@ img {
     position:fixed;
     left: 52%;
     top: 10%;
-    height: 170px;
+    height: 120px;
     width: 150px;
     margin: 0;
     padding: 0;
   }
   .store button {
     position:fixed;
-    top: 30%;
+    top: 25%;
     left: 63%;
   }
   .player-name input {
@@ -275,7 +277,7 @@ img {
   .chat {
     position: fixed;
     width: 340px;
-    height: 200px;
+    height: 190px;
     top: 73%;
     left: 7%;
   }
@@ -323,7 +325,7 @@ img {
     }
     .store button {
       position:fixed;
-      top: 29%;
+      top: 28%;
       left: 63%;
     }
     .player-name input {
