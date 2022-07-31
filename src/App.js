@@ -475,15 +475,7 @@ function App() {
                   );
                 })}
               </div>
-              <div>
-                <Button
-                  className="btn-sm"
-                  variant="secondary"
-                  onClick={handleRefresh}
-                >
-                  refresh
-                </Button>
-              </div>
+              <img src="refresh-icon.png" className="refresh" onClick={handleRefresh} height="24px" width="auto"></img>
               <Modal show={showStore} onHide={handleClose}>
                 <Modal.Header closeButton>
                   <Modal.Title>Buy Pokemon?</Modal.Title>

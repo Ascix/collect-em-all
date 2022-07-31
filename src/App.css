@@ -95,11 +95,6 @@ h4 {
 
 .skins {
   padding-left: 9px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  flex-wrap: wrap;
   margin-bottom: 7%;
 }
 
@@ -309,6 +304,10 @@ img {
     .right {
       position:absolute
     }
+    h4 {
+      margin: 0;
+      padding: 0;
+    }
     .skin-ui {
       position:fixed;
       left: 8%;
@@ -324,14 +323,15 @@ img {
       overflow-y: hidden;
       overflow-x: auto;
       padding-top: 10px;
-      padding-bottom: 7px;
-      margin-bottom: 5px;
-      margin-left: 50px;
     }
     .store {
       overflow-y: hidden;
     }
-
+    .items {
+      margin-left: 160px;
+      margin-bottom: 5px;
+      padding-bottom: 10px;
+    }
     .store-ui {
       position:fixed;
       left: 52%;
@@ -342,10 +342,10 @@ img {
       padding: 0;
       overflow-x: auto;
     }
-    .store button {
+    .refresh {
       position:fixed;
-      top: 28%;
-      left: 63%;
+      top: 13%;
+      left: 82%;
       z-index: 2;
     }
     .player-name input {
