@@ -19,7 +19,7 @@
 }
 
 .game-container {
-  position: fixed;
+  position: relative;
   width: 240px;
   height: 208px;
   top: 25%;
