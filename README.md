@@ -1,6 +1,6 @@
 # Collect 'em All
 
-Collect 'em All is a React based browser game where you can socialize with people and collect currency (pokeballs) to purchase new skins (Pokemon). The game is best played at 800x600 or 1024x800 resolution, but you can resize the window to find the best layout for yourself. This game is also playable on mobile, but there may be layout issues on some devices.
+Collect 'em All is a React based browser game where you can socialize with people and collect currency (pokeballs) to purchase new skins (Pokemon). The game is best played at 800x600 or 1024x800 resolution, but you can resize the window to find the best layout for yourself. This game is also playable on mobile, but there may be layout issues on some devices. Use the arrow keys to move, or by swiping on mobile devices.
 
 My website is hosted at this url!
 https://collect-em-all.netlify.app/
